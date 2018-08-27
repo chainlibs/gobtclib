@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
-	clients "./lib"
+	"./client"
 )
 
 /*
@@ -14,18 +14,17 @@ start up bitcoincash chain rpc client
  */
 func main() {
 	fmt.Println("start up bitcoincash rpc client")
-	cfg := &clients.Config{
+	cfg := &client.Config{
 		Host:         "172.16.2.41:8332",
 		User:         "user",
 		Pass:         "password",
-		HTTPPostMode: true, // Bitcoin core only supports HTTP POST mode
-		DisableTLS:   true, // Bitcoin core does not provide TLS by default
 	}
-	client, err := clients.NewClient(cfg)
-
-	if err != nil {
-		log.Fatal(err)
-	}
+	//cfg := &client.Config{
+	//	Host:         "192.168.137.169:18332",
+	//	User:         "bch",
+	//	Pass:         "bch",
+	//}
+	client := client.NewClient(cfg).Startup()
 	defer client.Shutdown()
 
 	// Get the current block count.
@@ -34,4 +33,5 @@ func main() {
 		log.Fatal(err)
 	}
 	log.Printf("Block count: %d", blockCount)
+
 }

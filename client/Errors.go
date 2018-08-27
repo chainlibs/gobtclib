@@ -1,4 +1,4 @@
-package clients
+package client
 
 import (
 	"errors"
@@ -146,4 +146,9 @@ func (e Error) Error() string {
 // MakeError creates an Error given a set of arguments.
 func makeError(c ErrorCode, desc string) Error {
 	return Error{ErrorCode: c, Description: desc}
+}
+
+func makeInvalidIDError(c ErrorCode, id interface{}) Error {
+	desc := fmt.Sprintf("the id of type '%T' is invalid", id)
+	return makeError(c, desc)
 }

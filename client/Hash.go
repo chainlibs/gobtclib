@@ -1,8 +1,8 @@
-package clients
+package client
 
 import (
-	"fmt"
 	"encoding/hex"
+	"fmt"
 	"crypto/sha256"
 )
 
@@ -16,12 +16,22 @@ const MaxHashStringSize = HashSize * 2
 // string that has too many characters.
 var ErrHashStrSize = fmt.Errorf("max hash string length is %v bytes", MaxHashStringSize)
 
-// Hash is used in several of the bitcoin messages and common structures.  It
-// typically represents the double sha256 of data.
+
+/*
+Description:
+Hash is used in several of the bitcoin messages and common structures.  It
+typically represents the double sha256 of data.
+ * Author: architect.bian
+ * Date: 2018/08/27 11:10
+ */
 type Hash [HashSize]byte
 
-// String returns the Hash as the hexadecimal string of the byte-reversed
-// hash.
+/*
+Description:
+String returns the Hash as the hexadecimal string of the byte-reversed hash.
+ * Author: architect.bian
+ * Date: 2018/08/27 11:15
+ */
 func (hash Hash) String() string {
 	for i := 0; i < HashSize/2; i++ {
 		hash[i], hash[HashSize-1-i] = hash[HashSize-1-i], hash[i]
@@ -29,11 +39,16 @@ func (hash Hash) String() string {
 	return hex.EncodeToString(hash[:])
 }
 
-// CloneBytes returns a copy of the bytes which represent the hash as a byte
-// slice.
-//
-// NOTE: It is generally cheaper to just slice the hash directly thereby reusing
-// the same bytes rather than calling this method.
+/*
+Description:
+CloneBytes returns a copy of the bytes which represent the hash as a byte
+slice.
+
+NOTE: It is generally cheaper to just slice the hash directly thereby reusing
+the same bytes rather than calling this method.
+ * Author: architect.bian
+ * Date: 2018/08/27 11:16
+ */
 func (hash *Hash) CloneBytes() []byte {
 	newHash := make([]byte, HashSize)
 	copy(newHash, hash[:])
@@ -41,20 +56,31 @@ func (hash *Hash) CloneBytes() []byte {
 	return newHash
 }
 
-// SetBytes sets the bytes which represent the hash.  An error is returned if
-// the number of bytes passed in is not HashSize.
+
+/*
+Description:
+SetBytes sets the bytes which represent the hash.  An error is returned if
+the number of bytes passed in is not HashSize.
+ * Author: architect.bian
+ * Date: 2018/08/27 11:18
+ */
 func (hash *Hash) SetBytes(newHash []byte) error {
 	nhlen := len(newHash)
 	if nhlen != HashSize {
-		return fmt.Errorf("invalid hash length of %v, want %v", nhlen,
-			HashSize)
+		return fmt.Errorf("invalid hash length of %v, want %v", nhlen, HashSize)
 	}
 	copy(hash[:], newHash)
 
 	return nil
 }
 
-// IsEqual returns true if target is the same as hash.
+
+/*
+Description:
+IsEqual returns true if target is the same as hash.
+ * Author: architect.bian
+ * Date: 2018/08/27 11:19
+ */
 func (hash *Hash) IsEqual(target *Hash) bool {
 	if hash == nil && target == nil {
 		return true
@@ -65,8 +91,13 @@ func (hash *Hash) IsEqual(target *Hash) bool {
 	return *hash == *target
 }
 
-// NewHash returns a new Hash from a byte slice.  An error is returned if
-// the number of bytes passed in is not HashSize.
+/*
+Description:
+NewHash returns a new Hash from a byte slice.  An error is returned if
+the number of bytes passed in is not HashSize.
+ * Author: architect.bian
+ * Date: 2018/08/27 11:20
+ */
 func NewHash(newHash []byte) (*Hash, error) {
 	var sh Hash
 	err := sh.SetBytes(newHash)
@@ -76,9 +107,15 @@ func NewHash(newHash []byte) (*Hash, error) {
 	return &sh, err
 }
 
-// NewHashFromStr creates a Hash from a hash string.  The string should be
-// the hexadecimal string of a byte-reversed hash, but any missing characters
-// result in zero padding at the end of the Hash.
+
+/*
+Description:
+NewHashFromStr creates a Hash from a hash string.  The string should be
+the hexadecimal string of a byte-reversed hash, but any missing characters
+result in zero padding at the end of the Hash.
+ * Author: architect.bian
+ * Date: 2018/08/27 11:30
+ */
 func NewHashFromStr(hash string) (*Hash, error) {
 	ret := new(Hash)
 	err := Decode(ret, hash)
@@ -88,16 +125,19 @@ func NewHashFromStr(hash string) (*Hash, error) {
 	return ret, nil
 }
 
-// Decode decodes the byte-reversed hexadecimal string encoding of a Hash to a
-// destination.
+/*
+Description:
+Decode decodes the byte-reversed hexadecimal string encoding of a Hash to a destination.
+ * Author: architect.bian
+ * Date: 2018/08/27 11:30
+ */
 func Decode(dst *Hash, src string) error {
 	// Return error if hash string is too long.
 	if len(src) > MaxHashStringSize {
 		return ErrHashStrSize
 	}
 
-	// Hex decoder expects the hash to be a multiple of two.  When not, pad
-	// with a leading zero.
+	// Hex decoder expects the hash to be a multiple of two.  When not, pad with a leading zero.
 	var srcBytes []byte
 	if len(src)%2 == 0 {
 		srcBytes = []byte(src)
@@ -123,26 +163,45 @@ func Decode(dst *Hash, src string) error {
 	return nil
 }
 
-// HashB calculates hash(b) and returns the resulting bytes.
+/*
+Description:
+HashB calculates hash(b) and returns the resulting bytes.
+ * Author: architect.bian
+ * Date: 2018/08/27 13:05
+ */
 func HashB(b []byte) []byte {
 	hash := sha256.Sum256(b)
 	return hash[:]
 }
 
-// HashH calculates hash(b) and returns the resulting bytes as a Hash.
+/*
+Description:
+HashH calculates hash(b) and returns the resulting bytes as a Hash.
+ * Author: architect.bian
+ * Date: 2018/08/27 13:05
+ */
 func HashH(b []byte) Hash {
 	return Hash(sha256.Sum256(b))
 }
 
-// DoubleHashB calculates hash(hash(b)) and returns the resulting bytes.
+/*
+Description:
+DoubleHashB calculates hash(hash(b)) and returns the resulting bytes.
+ * Author: architect.bian
+ * Date: 2018/08/27 13:05
+ */
 func DoubleHashB(b []byte) []byte {
 	first := sha256.Sum256(b)
 	second := sha256.Sum256(first[:])
 	return second[:]
 }
 
-// DoubleHashH calculates hash(hash(b)) and returns the resulting bytes as a
-// Hash.
+/*
+Description:
+DoubleHashH calculates hash(hash(b)) and returns the resulting bytes as a Hash.
+ * Author: architect.bian
+ * Date: 2018/08/27 13:05
+ */
 func DoubleHashH(b []byte) Hash {
 	first := sha256.Sum256(b)
 	return Hash(sha256.Sum256(first[:]))

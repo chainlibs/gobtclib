@@ -1,19 +1,25 @@
-package clients
+package utils
 
 import (
-	"net/http"
 	"net/url"
+	"net/http"
 	"crypto/tls"
 	"crypto/x509"
 )
 
-// newHTTPClient returns a new http client that is configured according to the
-// proxy and TLS settings in the associated connection configuration.
-func newHTTPClient(config *Config) (*http.Client, error) {
+type httpUtil struct {}
+
+var Http httpUtil
+
+func (this httpUtil) NewSimpleClient() (*http.Client, error) {
+	return this.NewClient("", false, nil)
+}
+
+func (this httpUtil) NewClient(proxy string, enableTLS bool, certificates []byte) (*http.Client, error) {
 	// Set proxy function if there is a proxy configured.
 	var proxyFunc func(*http.Request) (*url.URL, error)
-	if config.Proxy != "" {
-		proxyURL, err := url.Parse(config.Proxy)
+	if proxy != "" {
+		proxyURL, err := url.Parse(proxy)
 		if err != nil {
 			return nil, err
 		}
@@ -22,10 +28,10 @@ func newHTTPClient(config *Config) (*http.Client, error) {
 
 	// Configure TLS if needed.
 	var tlsConfig *tls.Config
-	if !config.DisableTLS {
-		if len(config.Certificates) > 0 {
+	if enableTLS {
+		if len(certificates) > 0 {
 			pool := x509.NewCertPool()
-			pool.AppendCertsFromPEM(config.Certificates)
+			pool.AppendCertsFromPEM(certificates)
 			tlsConfig = &tls.Config{
 				RootCAs: pool,
 			}
