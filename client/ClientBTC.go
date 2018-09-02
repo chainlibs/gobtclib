@@ -2,7 +2,7 @@ package client
 
 import (
 	"encoding/json"
-	"../utils"
+	"github.com/chainlibs/gobtclib/utils"
 	"bytes"
 	"encoding/hex"
 )

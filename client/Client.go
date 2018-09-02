@@ -8,7 +8,7 @@ import (
 	"io/ioutil"
 	"fmt"
 	"bytes"
-	"../utils"
+	"github.com/chainlibs/gobtclib/utils"
 	"encoding/json"
 )
 

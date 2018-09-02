@@ -1,5 +1,11 @@
 package client
 
+/*
+Description:
+register all the rpc command. Reference: https://bitcoin.org/en/developer-reference
+ * Author: architect.bian
+ * Date: 2018/08/27 19:24
+ */
 func init() {
 	// No special flags for commands in this file.
 	flags := UsageFlag(0)
