@@ -15,9 +15,9 @@ show demos of gobtclib/client
 func main() {
 	fmt.Println("start up bitcoin rpc client")
 	cfg := &client.Config{
-		Host:         "172.16.2.41:8332",
-		User:         "user",
-		Pass:         "password",
+		Host:         "172.16.2.27:8332",
+		User:         "btc",
+		Pass:         "btcpwd",
 	}
 	demos.Initialize(cfg)
 	demos.GetBlockCountTest()
