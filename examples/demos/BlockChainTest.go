@@ -1,6 +1,8 @@
 package demos
 
-import "log"
+import (
+	"github.com/gobasis/log"
+)
 
 /*
 Description:
@@ -12,7 +14,7 @@ func GetBlockCountTest() {
 	// Get the current block count.
 	blockCount, err := cli.GetBlockCount()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("", "error", err)
 	}
-	log.Printf("Block count: %d", blockCount)
+	log.Info("GetBlockCount", "count", blockCount)
 }

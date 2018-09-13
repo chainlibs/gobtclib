@@ -4,12 +4,13 @@ import (
 	"net/http"
 	"sync"
 	"sync/atomic"
-	"log"
+	glog "log"
 	"io/ioutil"
 	"fmt"
 	"bytes"
 	"github.com/chainlibs/gobtclib/utils"
 	"encoding/json"
+	"github.com/gobasis/log"
 )
 
 /*
@@ -23,7 +24,7 @@ func NewClient(config *Config) (*Client) {
 	var err error
 	httpClient, err = utils.Http.NewClient(config.Proxy, config.EnableTLS, config.Certificates)
 	if err != nil {
-		log.Fatal(err)
+		glog.Fatal(err)
 		return nil
 	}
 
@@ -90,7 +91,7 @@ start begins processing input and output messages.
  * Date: 2018/08/23 16:02
  */
 func (c *Client) Startup() *Client {
-	log.Printf("Starting RPC client %s", c.config.Host)
+	log.Info("Starting RPC client", "Host", c.config.Host)
 	c.wg.Add(1)
 	go c.sendPostHandler()
 	return c
@@ -117,7 +118,7 @@ func (c *Client) NextID() uint64 {
 // provided response channel.
 func (c *Client) handleSendPostMessage(details *sendPostDetails) { //TODO handleRequestDetail?
 	jReq := details.jsonRequest
-	log.Printf("Sending command [%s] with id %d", jReq.method, jReq.id)
+	log.Debug("Sending command", "command", jReq.method, "id", jReq.id)
 	httpResponse, err := c.httpClient.Do(details.httpRequest)
 	if err != nil {
 		jReq.responseChan <- &response{err: err}
@@ -188,7 +189,7 @@ cleanup:
 		}
 	}
 	c.wg.Done()
-	log.Printf("RPC client send handler done for %s", c.config.Host)
+	glog.Printf("RPC client send handler done for %s", c.config.Host)
 
 }
 
@@ -243,7 +244,7 @@ func (c *Client) sendPost(jReq *jsonRequest) {
 	// Configure basic access authorization.
 	httpRequest.SetBasicAuth(c.config.User, c.config.Pass)
 
-	log.Printf("Sending command [%s] with id %d", jReq.method, jReq.id)
+	log.Debug("Sending command", "command", jReq.method, "id", jReq.id)
 	c.sendPostRequest(httpRequest, jReq)
 }
 
@@ -341,7 +342,7 @@ func (c *Client) doDisconnect() bool {
 		return false
 	}
 
-	log.Printf("Disconnecting RPC client %s \n", c.config.Host)
+	glog.Printf("Disconnecting RPC client %s \n", c.config.Host)
 	close(c.disconnect)
 	//if c.wsConn != nil {
 	//	c.wsConn.Close()
@@ -368,7 +369,7 @@ func (c *Client) needShutdown() bool {
 	default:
 	}
 
-	log.Printf("Shutting down RPC client %s \n", c.config.Host)
+	glog.Printf("Shutting down RPC client %s \n", c.config.Host)
 	close(c.shutdown)
 	return true
 }

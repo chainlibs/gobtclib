@@ -1,0 +1,5 @@
+{
+  "level": "debug",
+  "outputPaths": ["stdout", "debug.log"],
+  "errorOutputPaths": ["stderr"]
+}

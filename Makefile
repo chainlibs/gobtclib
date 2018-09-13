@@ -5,7 +5,7 @@ all : clean deps build deploy
 
 .PHONY: deps
 deps :
-	go get github.com/xxx; go get github.com/yyy
+	go get -u go.uber.org/zap;go get -u github.com/gobasis/log;
 
 .PHONY: build
 build :
