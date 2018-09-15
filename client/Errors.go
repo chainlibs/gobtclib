@@ -140,7 +140,7 @@ type Error struct {
 
 // Error satisfies the error interface and prints human-readable errors.
 func (e Error) Error() string {
-	return e.Description
+	return e.ErrorCode.String() + "\t" + e.Description
 }
 
 // MakeError creates an Error given a set of arguments.

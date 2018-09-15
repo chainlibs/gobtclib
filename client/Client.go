@@ -183,14 +183,12 @@ cleanup:
 				result: nil,
 				err:    ErrClientShutdown,
 			}
-
 		default:
 			break cleanup
 		}
 	}
 	c.wg.Done()
-	glog.Printf("RPC client send handler done for %s", c.config.Host)
-
+	log.Info("RPC client send task clean up", "host", c.config.Host)
 }
 
 /*
@@ -232,6 +230,8 @@ func (c *Client) sendPost(jReq *jsonRequest) {
 		protocol = "https"
 	}
 	url := protocol + "://" + c.config.Host
+	fmt.Printf(string(jReq.marshalledJSON))
+	//log.Debug()
 	bodyReader := bytes.NewReader(jReq.marshalledJSON)
 	httpRequest, err := http.NewRequest("POST", url, bodyReader)
 	if err != nil {
@@ -244,7 +244,6 @@ func (c *Client) sendPost(jReq *jsonRequest) {
 	// Configure basic access authorization.
 	httpRequest.SetBasicAuth(c.config.User, c.config.Pass)
 
-	log.Debug("Sending command", "command", jReq.method, "id", jReq.id)
 	c.sendPostRequest(httpRequest, jReq)
 }
 
@@ -287,7 +286,7 @@ func (c *Client) sendCmd(cmd interface{}) chan *response { //TODO chan *future?
 	if err != nil {
 		return newFutureError(err)
 	}
-
+	log.Debug("posting json content", "json", string(marshalledJSON))
 	// Generate the request and send it along with a channel to respond on.
 	responseChan := make(chan *response, 1)
 	jReq := &jsonRequest{
@@ -311,87 +310,35 @@ func (c *Client) sendCmdAndWait(cmd interface{}) (interface{}, error) {
 	return receiveFuture(c.sendCmd(cmd))
 }
 
-// Disconnected returns whether or not the server is disconnected.  If a
-// websocket client was created but never connected, this also returns false.
-func (c *Client) Disconnected() bool {
-	c.mtx.Lock()
-	defer c.mtx.Unlock()
-
-	//select {
-	//case <-c.connEstablished:
-	//	return c.disconnected
-	//default:
-	//	return false
-	//}
-	return false
-}
-
-// doDisconnect disconnects the websocket associated with the client if it
-// hasn't already been disconnected.  It will return false if the disconnect is
-// not needed or the client is running in HTTP POST mode.
-//
-// This function is safe for concurrent access.
-func (c *Client) doDisconnect() bool {
-	return false
-
-	c.mtx.Lock()
-	defer c.mtx.Unlock()
-
-	// Nothing to do if already disconnected.
-	if c.disconnected {
-		return false
-	}
-
-	glog.Printf("Disconnecting RPC client %s \n", c.config.Host)
-	close(c.disconnect)
-	//if c.wsConn != nil {
-	//	c.wsConn.Close()
-	//}
-	c.disconnected = true
-	return true
-}
-
 /*
 Description:
 needShutdown closes the shutdown channel and logs the shutdown unless shutdown
 is already in progress.  It will return false if the shutdown is not needed.
-
 This function is safe for concurrent access.
  * Author: architect.bian
  * Date: 2018/08/26 19:38
  */
-func (c *Client) needShutdown() bool {
+func (c *Client) Shutdown() {
 	// Ignore the shutdown request if the client is already in the process
 	// of shutting down or already shutdown.
 	select {
 	case <-c.shutdown:
-		return false
+		return
 	default:
 	}
 
-	glog.Printf("Shutting down RPC client %s \n", c.config.Host)
 	close(c.shutdown)
-	return true
+	c.WaitForShutdown()
+	log.Info("Shut down RPC client", "host", c.config.Host)
 }
 
 
-// Shutdown shuts down the client by disconnecting any connections associated
-// with the client and, when automatic reconnect is enabled, preventing future
-// attempts to reconnect.  It also stops all goroutines.
-func (c *Client) Shutdown() {
-
-	// Ignore the shutdown request if the client is already in the process
-	// of shutting down or already shutdown.
-	if !c.needShutdown() {
-		return
-	}
-
-	// Disconnect the client if needed.
-	c.doDisconnect()
-}
-
-// WaitForShutdown blocks until the client goroutines are stopped and the
-// connection is closed.
+/*
+Description:
+WaitForShutdown blocks until the client goroutines are stopped and the connection is closed.
+ * Author: architect.bian
+ * Date: 2018/09/14 12:04
+ */
 func (c *Client) WaitForShutdown() {
 	c.wg.Wait()
 }

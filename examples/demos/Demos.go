@@ -14,5 +14,14 @@ initialize an instance of client.Client with client.Config
  */
 func Initialize(cfg *client.Config) {
 	cli = client.NewClient(cfg).Startup()
-	//defer cli.Shutdown()
+}
+
+/*
+Description:
+shutdown client
+ * Author: architect.bian
+ * Date: 2018/09/14 12:07
+ */
+func Shutdown() {
+	cli.Shutdown()
 }

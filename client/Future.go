@@ -32,19 +32,29 @@ func (r FutureResult) Receive(result interface{}) (*interface{}, error) {
 	return &result, nil
 }
 
-// receiveFuture receives from the passed futureResult channel to extract a
-// reply or any errors.  The examined errors include an error in the
-// futureResult and the error in the reply from the server.  This will block
-// until the result is available on the passed channel.
+/*
+Description:
+receiveFuture receives from the passed futureResult channel to extract a
+reply or any errors.  The examined errors include an error in the
+futureResult and the error in the reply from the server.  This will block
+until the result is available on the passed channel.
+ * Author: architect.bian
+ * Date: 2018/09/14 12:56
+ */
 func receiveFuture(f chan *response) ([]byte, error) { //TODO futerReceive?!
 	// Wait for a response on the returned channel.
 	r := <-f
 	return r.result, r.err
 }
 
-// newFutureError returns a new future result channel that already has the
-// passed error waitin on the channel with the reply set to nil.  This is useful
-// to easily return errors from the various Async functions.
+/*
+Description:
+newFutureError returns a new future result channel that already has the
+passed error waitin on the channel with the reply set to nil.  This is useful
+to easily return errors from the various Async functions.
+ * Author: architect.bian
+ * Date: 2018/09/14 12:57
+ */
 func newFutureError(err error) chan *response {
 	responseChan := make(chan *response, 1)
 	responseChan <- &response{err: err}

@@ -31,7 +31,7 @@ type jsonRequest struct { //TODO JsonDetail?JsonRequestDetail?
 	method         string
 	cmd            interface{}
 	marshalledJSON []byte
-	responseChan   chan *response
+	responseChan   chan *response //TODO separate
 }
 
 /*

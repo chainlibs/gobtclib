@@ -162,7 +162,7 @@ func makeParams(rt reflect.Type, rv reflect.Value) []interface{} {
 			if rvf.IsNil() {
 				break
 			}
-			params = append(params, rvf.Elem())
+			rvf.Elem() //todo why?
 		}
 		params = append(params, rvf.Interface())
 	}

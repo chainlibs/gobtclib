@@ -15,12 +15,23 @@ show demos of gobtclib/client
  */
 func main() {
 	log.UseLog(&zapimpl.Logger{}) // use zap log
+	log.SetLevel(log.DevDebugLevel)
 	log.Info("start up bitcoin rpc client")
 	cfg := &client.Config{
-		Host:         "172.16.2.27:8332",
-		User:         "btc",
-		Pass:         "btcpwd",
+		Host:         "172.16.2.35:3333",
+		User:         "et",
+		Pass:         "www.et.com",
 	}
+	//cfg := &client.Config{
+	//	Host:         "172.16.2.27:8332",
+	//	User:         "btc",
+	//	Pass:         "btcpwd",
+	//}
 	demos.Initialize(cfg)
-	demos.GetBlockCountTest()
+	defer demos.Shutdown()
+	//demos.GetBlockCountTest()
+	//demos.GetBestBlockHashTest()
+	//demos.GetDifficultyTest()
+	//demos.GetBlockHashTest()
+	demos.GetBlockHeaderVerboseTest()
 }

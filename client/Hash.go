@@ -6,21 +6,39 @@ import (
 	"crypto/sha256"
 )
 
-// HashSize of array used to store hashes.  See Hash.
+/*
+Description:
+HashSize of array used to store hashes.  See Hash.
+ * Author: architect.bian
+ * Date: 2018/09/14 15:23
+ */
 const HashSize = 32
 
-// MaxHashStringSize is the maximum length of a Hash hash string.
+/*
+Description:
+MaxHashStringSize is the maximum length of a Hash hash string.
+1byte=8*1bit
+16 = 4*1bit
+the max of 1byte is 16*16, 1byte can present with 2 hexadecimal
+ * Author: architect.bian
+ * Date: 2018/09/14 15:23
+ */
 const MaxHashStringSize = HashSize * 2
 
-// ErrHashStrSize describes an error that indicates the caller specified a hash
-// string that has too many characters.
-var ErrHashStrSize = fmt.Errorf("max hash string length is %v bytes", MaxHashStringSize)
-
+/*
+Description:
+HashStrSizeErr describes an error that indicates the caller specified a hash
+string that has too many characters.
+ * Author: architect.bian
+ * Date: 2018/09/14 15:29
+ */
+var HashStrSizeErr = fmt.Errorf("max hash string length is %v bytes", MaxHashStringSize)
 
 /*
 Description:
 Hash is used in several of the bitcoin messages and common structures.  It
 typically represents the double sha256 of data.
+reference document https://bitcoin.org/en/developer-reference#hash-byte-order
  * Author: architect.bian
  * Date: 2018/08/27 11:10
  */
@@ -41,8 +59,7 @@ func (hash Hash) String() string {
 
 /*
 Description:
-CloneBytes returns a copy of the bytes which represent the hash as a byte
-slice.
+CloneBytes returns a copy of the bytes which represent the hash as a byte slice.
 
 NOTE: It is generally cheaper to just slice the hash directly thereby reusing
 the same bytes rather than calling this method.
@@ -52,10 +69,8 @@ the same bytes rather than calling this method.
 func (hash *Hash) CloneBytes() []byte {
 	newHash := make([]byte, HashSize)
 	copy(newHash, hash[:])
-
 	return newHash
 }
-
 
 /*
 Description:
@@ -70,10 +85,8 @@ func (hash *Hash) SetBytes(newHash []byte) error {
 		return fmt.Errorf("invalid hash length of %v, want %v", nhlen, HashSize)
 	}
 	copy(hash[:], newHash)
-
 	return nil
 }
-
 
 /*
 Description:
@@ -107,7 +120,6 @@ func NewHash(newHash []byte) (*Hash, error) {
 	return &sh, err
 }
 
-
 /*
 Description:
 NewHashFromStr creates a Hash from a hash string.  The string should be
@@ -134,7 +146,7 @@ Decode decodes the byte-reversed hexadecimal string encoding of a Hash to a dest
 func Decode(dst *Hash, src string) error {
 	// Return error if hash string is too long.
 	if len(src) > MaxHashStringSize {
-		return ErrHashStrSize
+		return HashStrSizeErr
 	}
 
 	// Hex decoder expects the hash to be a multiple of two.  When not, pad with a leading zero.
