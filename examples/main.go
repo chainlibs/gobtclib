@@ -31,7 +31,22 @@ func main() {
 	defer demos.Shutdown()
 	//demos.GetBlockCountTest()
 	//demos.GetBestBlockHashTest()
-	//demos.GetDifficultyTest()
+	demos.GetDifficultyTest()
 	//demos.GetBlockHashTest()
-	demos.GetBlockHeaderVerboseTest()
+	//demos.GetBlockHeaderTest() //TODO failed
+	//demos.GetBlockHeaderVerboseTest()
+	//demos.GetBlockChainInfoTest()
+	//demos.GetBlockTest() // TODO failed
+	//demos.GetBlockVerboseTest()
+	//demos.GetBlockVerboseTxTest()
+	//demos.RescanBlocksTest() //TODO failed
+	//demos.GetCFilter() //TODO unimplemented
+	//demos.InvalidateBlockTest() //very dangerous
+	//demos.VerifyChainTest()
+	//demos.VerifyChainLevelTest()
+	//demos.VerifyChainBlocksTest()
+	//demos.GetRawMempoolTest()
+	//demos.GetRawMempoolVerboseTest()
+	//demos.GetMempoolEntryTest()
+	//demos.GetTxOutTest()
 }

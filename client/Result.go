@@ -34,9 +34,14 @@ type GetBlockHeaderVerboseResult struct {
 	NextHash      string  `json:"nextblockhash,omitempty"`
 }
 
-// GetBlockVerboseResult models the data from the getblock command when the
-// verbose flag is set.  When the verbose flag is not set, getblock returns a
-// hex-encoded string.
+/*
+Description:
+GetBlockVerboseResult models the data from the getblock command when the
+verbose flag is 0/1.  When the verbose flag is set as 0, getblock returns a
+hex-encoded string.
+ * Author: architect.bian
+ * Date: 2018/09/17 16:27
+ */
 type GetBlockVerboseResult struct {
 	Hash          string        `json:"hash"`
 	Confirmations uint64        `json:"confirmations"`
@@ -55,6 +60,19 @@ type GetBlockVerboseResult struct {
 	Difficulty    float64       `json:"difficulty"`
 	PreviousHash  string        `json:"previousblockhash"`
 	NextHash      string        `json:"nextblockhash,omitempty"`
+}
+
+/*
+Description:
+GetBlockVerboseTXResult models the data from the getblock command when the
+verbose flag is 2.  When the verbose flag is set as 0, getblock returns a
+hex-encoded string.
+ * Author: architect.bian
+ * Date: 2018/09/17 16:27
+ */
+type GetBlockVerboseTXResult struct {
+	GetBlockVerboseResult
+	Tx []TxRawResult 			`json:"tx"`
 }
 
 // CreateMultiSigResult models the data returned from the createmultisig
@@ -107,8 +125,12 @@ type Bip9SoftForkDescription struct {
 	Since     int32  `json:"since"`
 }
 
-// GetBlockChainInfoResult models the data returned from the getblockchaininfo
-// command.
+/*
+Description:
+GetBlockChainInfoResult models the data returned from the getblockchaininfo command.
+ * Author: architect.bian
+ * Date: 2018/09/17 14:53
+ */
 type GetBlockChainInfoResult struct {
 	Chain                string                              `json:"chain"`
 	Blocks               int32                               `json:"blocks"`
@@ -183,8 +205,12 @@ type GetBlockTemplateResult struct {
 	RejectReasion string   `json:"reject-reason,omitempty"`
 }
 
-// GetMempoolEntryResult models the data returned from the getmempoolentry
-// command.
+/*
+Description:
+GetMempoolEntryResult models the data returned from the getmempoolentry command.
+ * Author: architect.bian
+ * Date: 2018/09/17 20:24
+ */
 type GetMempoolEntryResult struct {
 	Size             int32    `json:"size"`
 	Fee              float64  `json:"fee"`
@@ -269,17 +295,22 @@ type GetPeerInfoResult struct {
 	SyncNode       bool    `json:"syncnode"`
 }
 
-// GetRawMempoolVerboseResult models the data returned from the getrawmempool
-// command when the verbose flag is set.  When the verbose flag is not set,
-// getrawmempool returns an array of transaction hashes.
+/*
+Description:
+GetRawMempoolVerboseResult models the data returned from the getrawmempool
+command when the verbose flag is set.  When the verbose flag is not set,
+getrawmempool returns an array of transaction hashes.
+ * Author: architect.bian
+ * Date: 2018/09/17 20:12
+ */
 type GetRawMempoolVerboseResult struct {
 	Size             int32    `json:"size"`
 	Vsize            int32    `json:"vsize"`
 	Fee              float64  `json:"fee"`
 	Time             int64    `json:"time"`
 	Height           int64    `json:"height"`
-	StartingPriority float64  `json:"startingpriority"`
-	CurrentPriority  float64  `json:"currentpriority"`
+	StartingPriority float64  `json:"startingpriority"` //TODO new version compatibility
+	CurrentPriority  float64  `json:"currentpriority"`  //TODO new version compatibility
 	Depends          []string `json:"depends"`
 }
 
@@ -559,8 +590,13 @@ type ValidateAddressChainResult struct {
 	Address string `json:"address,omitempty"`
 }
 
-// BlockHeader defines information about a block and is used in the bitcoin
-// block (MsgBlock) and headers (MsgHeaders) messages.
+/*
+Description:
+BlockHeader defines information about a block and is used in the bitcoin
+block (MsgBlock) and headers (MsgHeaders) messages.
+ * Author: architect.bian
+ * Date: 2018/09/17 15:27
+ */
 type BlockHeader struct {
 	// Version of the block.  This is not the same as the protocol version.
 	Version int32
@@ -585,7 +621,7 @@ type BlockHeader struct {
 // Deserialize decodes a block header from r into the receiver using a format
 // that is suitable for long-term storage such as a database while respecting
 // the Version field.
-func (h *BlockHeader) Deserialize(r io.Reader) error {
+func (h *BlockHeader) Deserialize(r io.Reader) error { //TODO parse blockheader data
 	// At the current time, there is no difference between the wire encoding
 	// at protocol version 0 and the stable long-term storage format.  As
 	// a result, make use of readBlockHeader.
@@ -652,7 +688,7 @@ type MsgBlock struct {
 // This is part of the Message interface implementation.
 // See Deserialize for decoding blocks stored to disk, such as in a database, as
 // opposed to decoding blocks from the wire.
-func (msg *MsgBlock) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) error {
+func (msg *MsgBlock) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) error { //TODO parse byte data
 	//err := readBlockHeader(r, pver, &msg.Header)
 	//if err != nil {
 	//	return err

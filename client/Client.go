@@ -134,6 +134,7 @@ func (c *Client) handleSendPostMessage(details *sendPostDetails) { //TODO handle
 		return
 	}
 
+	log.Debug("receive result data after posted", "result", string(respBytes))
 	// Try to unmarshal the response as a regular JSON-RPC response.
 	var resp rawResponse
 	err = json.Unmarshal(respBytes, &resp)
