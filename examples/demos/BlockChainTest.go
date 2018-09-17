@@ -2,6 +2,7 @@ package demos
 
 import (
 	"github.com/gobasis/log"
+	"github.com/chainlibs/gobtclib/client"
 )
 
 /*
@@ -67,15 +68,16 @@ a demo test of GetBlockHeaderVerbose, Get the special blockheader data structure
  * Date: 2018/09/14 13:13
  */
 func GetBlockHeaderVerboseTest() {
-	hash, err := cli.GetBlockHash(1)
-	if err != nil {
-		log.Fatal("", "error", err)
-	}
-	log.Info("GetBlockHash", "hash", hash)
-	//hash, _ := client.NewHashFromStr("353eb168c70770b281f634fd0d22fbaee94b3fed1d76276e91165444e876f658")
+	//hash, err := cli.GetBlockHash(1)
+	//if err != nil {
+	//	log.Fatal("", "error", err)
+	//}
+	//log.Info("GetBlockHash", "hash", hash)
+	hash, _ := client.NewHashFromStr("353eb168c70770b281f634fd0d22fbaee94b3fed1d76276e91165444e876f658")
 	header, err := cli.GetBlockHeaderVerbose(hash)
 	if err != nil {
-		log.Fatal("", "error", err)
+		log.Error("", "error", err)
+		panic(err)
 	}
 	log.Info("GetBlockHeaderVerbose", "header", header)
 }

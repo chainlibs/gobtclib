@@ -48,11 +48,6 @@ var (
 		"connected")
 )
 
-
-// ErrorCode identifies a kind of error.  These error codes are NOT used for
-// JSON-RPC response errors.
-type ErrorCode int
-
 // These constants are used to identify a specific RuleError.
 const (
 	// ErrDuplicateMethod indicates a command with the specified method
@@ -120,32 +115,41 @@ var errorCodeStrings = map[ErrorCode]string{
 	ErrNumParams:            "ErrNumParams",
 }
 
-// String returns the ErrorCode as a human-readable name.
-func (e ErrorCode) String() string {
-	if s := errorCodeStrings[e]; s != "" {
-		return s
-	}
-	return fmt.Sprintf("Unknown ErrorCode (%d)", int(e))
-}
+// RPCErrorCode represents an error code to be used as a part of an RPCError
+// which is in turn used in a JSON-RPC Response object.
+//
+// A specific type is used to help ensure the wrong errors aren't used.
+type ErrorCode int
 
-// Error identifies a general error.  This differs from an RPCError in that this
-// error typically is used more by the consumers of the package as opposed to
-// RPCErrors which are intended to be returned to the client across the wire via
-// a JSON-RPC Response.  The caller can use type assertions to determine the
-// specific error and access the ErrorCode field.
+// RPCError represents an error that is used as a part of a JSON-RPC Response
+// object.
 type Error struct {
-	ErrorCode   ErrorCode // Describes the kind of error
-	Description string    // Human readable description of the issue
+	Code    ErrorCode	 `json:"code,omitempty"`
+	Message string       `json:"message,omitempty"`
 }
 
-// Error satisfies the error interface and prints human-readable errors.
+// Guarantee RPCError satisifies the builtin error interface.
+var _, _ error = Error{}, (*Error)(nil)
+
+// Error returns a string describing the RPC error.  This satisifies the
+// builtin error interface.
 func (e Error) Error() string {
-	return e.ErrorCode.String() + "\t" + e.Description
+	return fmt.Sprintf("%d: %s", e.Code, e.Message)
 }
+
+// NewRPCError constructs and returns a new JSON-RPC error that is suitable
+// for use in a JSON-RPC Response object.
+func NewError(code ErrorCode, message string) *Error {
+	return &Error{
+		Code:    code,
+		Message: message,
+	}
+}
+
 
 // MakeError creates an Error given a set of arguments.
-func makeError(c ErrorCode, desc string) Error {
-	return Error{ErrorCode: c, Description: desc}
+func makeError(c ErrorCode, msg string) Error {
+	return Error{Code: c, Message: msg}
 }
 
 func makeInvalidIDError(c ErrorCode, id interface{}) Error {

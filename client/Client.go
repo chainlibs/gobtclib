@@ -230,8 +230,6 @@ func (c *Client) sendPost(jReq *jsonRequest) {
 		protocol = "https"
 	}
 	url := protocol + "://" + c.config.Host
-	fmt.Printf(string(jReq.marshalledJSON))
-	//log.Debug()
 	bodyReader := bytes.NewReader(jReq.marshalledJSON)
 	httpRequest, err := http.NewRequest("POST", url, bodyReader)
 	if err != nil {
