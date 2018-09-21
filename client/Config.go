@@ -1,5 +1,12 @@
 package client
 
+
+const (
+	// requestsChanBufferSize is the number of elements the HTTP POST send
+	// channel can queue before blocking.
+	requestsChanBufferSize = 100
+)
+
 /*
 Description:
 ConnConfig describes the connection configuration parameters for the client.
@@ -48,5 +55,4 @@ type Config struct {
 	// however, not all servers support the websocket extensions, so this
 	// flag can be set to true to use basic HTTP POST requests instead.
 	//HTTPPostMode bool
-
 }

@@ -31,8 +31,7 @@ func NewClient(config *Config) (*Client) {
 	client := &Client{
 		config:          config,
 		httpClient:      httpClient,
-		sendChan:        make(chan []byte, sendBufferSize),
-		sendPostChan:    make(chan *sendPostDetails, sendPostBufferSize),
+		requestsChan:    make(chan *requestDetail, requestsChanBufferSize),
 		disconnect:      make(chan struct{}),
 		shutdown:        make(chan struct{}),
 	}
@@ -55,30 +54,16 @@ the returned future will block util the result is available if it's not already.
  */
 type Client struct {
 	id uint64 // atomic, so must stay 64-bit aligned
-
 	// config holds the connection configuration assoiated with this client.
 	config *Config
-
 	// httpClient is the underlying HTTP client to use when running in HTTP POST mode.
 	httpClient *http.Client
-
 	// mtx is a mutex to protect access to connection related fields.
 	mtx sync.Mutex
-
 	// disconnected indicated whether or not the server is disconnected.
 	disconnected bool
-
-	// retryCount holds the number of times the client has tried to reconnect to the RPC server.
-	retryCount int64
-
-	// Track command and their response channels by ID.
-	//requestLock sync.Mutex
-	//requestList *list.List
-
 	// Networking infrastructure.
-	sendChan        chan []byte				//TODO
-	sendPostChan    chan *sendPostDetails	//TODO
-	//connEstablished chan struct{}
+	requestsChan chan *requestDetail
 	disconnect      chan struct{}
 	shutdown        chan struct{}
 	wg              sync.WaitGroup
@@ -101,10 +86,10 @@ func (c *Client) Startup() *Client {
 /*
 Description:
 NextID returns the next id to be used when sending a JSON-RPC message.  This
-ID allows responses to be associated with particular requests per the
+ID allows responses to be associated with particular requestsChan per the
 JSON-RPC specification.  Typically the consumer of the client does not need
 to call this function, however, if a custom request is being created and used
-this function should be used to ensure the ID is unique amongst all requests
+this function should be used to ensure the ID is unique amongst all requestsChan
 being made.
  * Author: architect.bian
  * Date: 2018/08/26 14:30
@@ -113,10 +98,10 @@ func (c *Client) NextID() uint64 {
 	return atomic.AddUint64(&c.id, 1)
 }
 
-// handleSendPostMessage handles performing the passed HTTP request, reading the
+// handleRequestDetail handles performing the passed HTTP request, reading the
 // result, unmarshalling it, and delivering the unmarshalled result to the
 // provided response channel.
-func (c *Client) handleSendPostMessage(details *sendPostDetails) { //TODO handleRequestDetail?
+func (c *Client) handleRequestDetail(details *requestDetail) {
 	jReq := details.jsonRequest
 	log.Debug("Sending command", "command", jReq.method, "id", jReq.id)
 	httpResponse, err := c.httpClient.Do(details.httpRequest)
@@ -166,8 +151,8 @@ out:
 	for {
 		// Send any messages ready for send until the shutdown channel is closed.
 		select {
-		case details := <-c.sendPostChan:
-			c.handleSendPostMessage(details)
+		case detail := <-c.requestsChan:
+			c.handleRequestDetail(detail)
 
 		case <-c.shutdown:
 			break out
@@ -179,8 +164,8 @@ out:
 cleanup:
 	for {
 		select {
-		case details := <-c.sendPostChan:
-			details.jsonRequest.responseChan <- &response{
+		case detail := <-c.requestsChan:
+			detail.jsonRequest.responseChan <- &response{
 				result: nil,
 				err:    ErrClientShutdown,
 			}
@@ -208,7 +193,7 @@ func (c *Client) sendPostRequest(httpReq *http.Request, jReq *jsonRequest) {
 	default:
 	}
 
-	c.sendPostChan <- &sendPostDetails{
+	c.requestsChan <- &requestDetail{
 		jsonRequest: jReq,
 		httpRequest: httpReq,
 	}
@@ -311,7 +296,7 @@ func (c *Client) sendCmdAndWait(cmd interface{}) (interface{}, error) {
 
 /*
 Description:
-needShutdown closes the shutdown channel and logs the shutdown unless shutdown
+Shutdown closes the shutdown channel and logs the shutdown unless shutdown
 is already in progress.  It will return false if the shutdown is not needed.
 This function is safe for concurrent access.
  * Author: architect.bian
@@ -327,18 +312,6 @@ func (c *Client) Shutdown() {
 	}
 
 	close(c.shutdown)
-	c.WaitForShutdown()
+	c.wg.Wait() //blocks until the client goroutines are stopped and the connection is closed.
 	log.Info("Shut down RPC client", "host", c.config.Host)
 }
-
-
-/*
-Description:
-WaitForShutdown blocks until the client goroutines are stopped and the connection is closed.
- * Author: architect.bian
- * Date: 2018/09/14 12:04
- */
-func (c *Client) WaitForShutdown() {
-	c.wg.Wait()
-}
-

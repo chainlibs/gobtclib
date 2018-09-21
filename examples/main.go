@@ -17,25 +17,25 @@ func main() {
 	log.UseLog(&zapimpl.Logger{}) // use zap log
 	log.SetLevel(log.DevDebugLevel)
 	log.Info("start up bitcoin rpc client")
-	cfg := &client.Config{
-		Host:         "172.16.2.35:3333",
-		User:         "et",
-		Pass:         "www.et.com",
-	}
 	//cfg := &client.Config{
-	//	Host:         "172.16.2.27:8332",
-	//	User:         "btc",
-	//	Pass:         "btcpwd",
+	//	Host:         "172.16.2.35:3333",
+	//	User:         "et",
+	//	Pass:         "www.et.com",
 	//}
+	cfg := &client.Config{
+		Host:         "172.16.2.27:8332",
+		User:         "btc",
+		Pass:         "btcpwd",
+	}
 	demos.Initialize(cfg)
 	defer demos.Shutdown()
 	//demos.GetBlockCountTest()
 	//demos.GetBestBlockHashTest()
-	demos.GetDifficultyTest()
+	//demos.GetDifficultyTest()
 	//demos.GetBlockHashTest()
 	//demos.GetBlockHeaderTest() //TODO failed
 	//demos.GetBlockHeaderVerboseTest()
-	//demos.GetBlockChainInfoTest()
+	demos.GetBlockChainInfoTest()
 	//demos.GetBlockTest() // TODO failed
 	//demos.GetBlockVerboseTest()
 	//demos.GetBlockVerboseTxTest()
