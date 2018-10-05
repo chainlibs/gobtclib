@@ -11,11 +11,23 @@ type httpUtil struct {}
 
 var Http httpUtil
 
-func (this httpUtil) NewSimpleClient() (*http.Client, error) {
-	return this.NewClient("", false, nil)
+/*
+Description:
+NewClientSimple returns a new instance of http.client with no arguments
+ * Author: architect.bian
+ * Date: 2018/10/05 18:08
+ */
+func (h httpUtil) NewClientSimple() (*http.Client, error) {
+	return h.NewClient("", false, nil)
 }
 
-func (this httpUtil) NewClient(proxy string, enableTLS bool, certificates []byte) (*http.Client, error) {
+/*
+Description:
+NewClient returns a new instance of http.client with proxy, enableTLS, certificates
+ * Author: architect.bian
+ * Date: 2018/10/05 18:11
+ */
+func (h httpUtil) NewClient(proxy string, enableTLS bool, certificates []byte) (*http.Client, error) {
 	// Set proxy function if there is a proxy configured.
 	var proxyFunc func(*http.Request) (*url.URL, error)
 	if proxy != "" {

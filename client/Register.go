@@ -101,8 +101,7 @@ func RegisterCmd(method string, cmd interface{}, flags UsageFlag) error {
 		return makeError(ErrInvalidType, str)
 	}
 
-	// Enumerate the struct fields to validate them and gather parameter
-	// information.
+	// Enumerate the struct fields to validate them and gather parameter information.
 	numFields := rt.NumField()
 	numOptFields := 0
 	defaults := make(map[int]reflect.Value)

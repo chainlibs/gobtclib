@@ -1,6 +1,5 @@
 package client
 
-
 const (
 	// requestsChanBufferSize is the number of elements the HTTP POST send
 	// channel can queue before blocking.
