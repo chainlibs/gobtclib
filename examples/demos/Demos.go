@@ -8,7 +8,7 @@ var cli *client.Client
 
 /*
 Description:
-initialize an instance of client.Client with client.Config
+Initialize create an instance of client.Client with client.Config
  * Author: architect.bian
  * Date: 2018/09/02 18:24
  */
