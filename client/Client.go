@@ -247,7 +247,6 @@ func (c *Client) sendRequest(jReq *jsonRequest) {
 	// ws ignore ...
 }
 
-
 /*
 Description:
 sendCmd sends the passed command to the associated server and returns a
@@ -257,16 +256,10 @@ configuration of the client.
  * Author: architect.bian
  * Date: 2018/08/26 18:46
  */
-func (c *Client) sendCmd(cmd interface{}) chan *response { //TODO chan *future?
-	// Get the method associated with the command.
-	method, err := getCmdMethod(cmd)
-	if err != nil {
-		return newFutureError(err)
-	}
-
+func (c *Client) sendCmd(cmd *Command) chan *response {
 	// Marshal the command.
 	id := c.NextID()
-	marshalledJSON, err := MarshalCmd(id, cmd)
+	marshalledJSON, err := MarshalCmd2(id, cmd)
 	if err != nil {
 		return newFutureError(err)
 	}
@@ -275,7 +268,7 @@ func (c *Client) sendCmd(cmd interface{}) chan *response { //TODO chan *future?
 	responseChan := make(chan *response, 1)
 	jReq := &jsonRequest{
 		id:             id,
-		method:         method,
+		method:         cmd.name,
 		cmd:            cmd,
 		marshalledJSON: marshalledJSON,
 		responseChan:   responseChan,
@@ -285,10 +278,15 @@ func (c *Client) sendCmd(cmd interface{}) chan *response { //TODO chan *future?
 	return responseChan
 }
 
-// sendCmdAndWait sends the passed command to the associated server, waits
-// for the reply, and returns the result from it.  It will return the error
-// field in the reply if there is one.
-func (c *Client) sendCmdAndWait(cmd interface{}) (interface{}, error) {
+/*
+Description:
+sendCmdAndWait sends the passed command to the associated server, waits
+for the reply, and returns the result from it.  It will return the error
+field in the reply if there is one.
+ * Author: architect.bian
+ * Date: 2018/10/06 19:50
+ */
+func (c *Client) sendCmdAndWait(cmd *Command) (interface{}, error) {
 	// Marshal the command to JSON-RPC, send it to the connected server, and
 	// wait for a response on the returned channel.
 	return receiveFuture(c.sendCmd(cmd))

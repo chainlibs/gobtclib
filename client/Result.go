@@ -762,24 +762,24 @@ func (msg *MsgBlock) DeserializeNoWitness(r io.Reader) error {
 	return msg.BtcDecode(r, 0, BaseEncoding)
 }
 
-// MsgCFilter implements the Message interface and represents a bitcoin cfilter
-// message. It is used to deliver a committed filter in response to a
-// getcfilters (MsgGetCFilters) message.
-type MsgCFilter struct {
-	FilterType FilterType
-	BlockHash  Hash
-	Data       []byte
-}
+//// MsgCFilter implements the Message interface and represents a bitcoin cfilter
+//// message. It is used to deliver a committed filter in response to a
+//// getcfilters (MsgGetCFilters) message.
+//type MsgCFilter struct {
+//	FilterType FilterType
+//	BlockHash  Hash
+//	Data       []byte
+//}
 
 
-// MsgCFHeaders implements the Message interface and represents a bitcoin
-// cfheaders message.  It is used to deliver committed filter header information
-// in response to a getcfheaders message (MsgGetCFHeaders). The maximum number
-// of committed filter headers per message is currently 2000. See
-// MsgGetCFHeaders for details on requesting the headers.
-type MsgCFHeaders struct {
-	FilterType       FilterType
-	StopHash         Hash
-	PrevFilterHeader Hash
-	FilterHashes     []*Hash
-}
+//// MsgCFHeaders implements the Message interface and represents a bitcoin
+//// cfheaders message.  It is used to deliver committed filter header information
+//// in response to a getcfheaders message (MsgGetCFHeaders). The maximum number
+//// of committed filter headers per message is currently 2000. See
+//// MsgGetCFHeaders for details on requesting the headers.
+//type MsgCFHeaders struct {
+//	FilterType       FilterType
+//	StopHash         Hash
+//	PrevFilterHeader Hash
+//	FilterHashes     []*Hash
+//}
