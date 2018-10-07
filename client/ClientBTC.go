@@ -3,6 +3,7 @@ package client
 import (
 	"github.com/chainlibs/gobtclib/utils"
 	"github.com/chainlibs/gobtclib/results"
+	"github.com/chainlibs/gobtclib/futures"
 )
 
 /*
@@ -15,7 +16,7 @@ See GetBestBlockHash for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/14 13:18
  */
-func (c *Client) GetBestBlockHashAsync() results.FutureGetBestBlockHashResult {
+func (c *Client) GetBestBlockHashAsync() futures.FutureGetBestBlockHashResult {
 	cmd := NewCommand("getbestblockhash")
 	return c.sendCmd(cmd)
 }
@@ -40,7 +41,7 @@ See GetBlockCount for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/14 12:49
  */
-func (c *Client) GetBlockCountAsync() results.FutureGetBlockCountResult {
+func (c *Client) GetBlockCountAsync() futures.FutureGetBlockCountResult {
 	cmd := NewCommand("getblockcount")
 	return c.sendCmd(cmd)
 }
@@ -65,7 +66,7 @@ See GetDifficulty for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/14 17:35
  */
-func (c *Client) GetDifficultyAsync() results.FutureGetDifficultyResult {
+func (c *Client) GetDifficultyAsync() futures.FutureGetDifficultyResult {
 	cmd := NewCommand("getdifficulty")
 	return c.sendCmd(cmd)
 }
@@ -91,7 +92,7 @@ See GetBlockHash for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/15 15:35
  */
-func (c *Client) GetBlockHashAsync(blockHeight int64) results.FutureGetBlockHashResult {
+func (c *Client) GetBlockHashAsync(blockHeight int64) futures.FutureGetBlockHashResult {
 	cmd := NewCommand("getblockhash", blockHeight)
 	return c.sendCmd(cmd)
 }
@@ -116,7 +117,7 @@ See GetBlockHeader for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/15 17:51
  */
-func (c *Client) GetBlockHeaderVerboseAsync(blockHash *results.Hash) results.FutureGetBlockHeaderVerboseResult {
+func (c *Client) GetBlockHeaderVerboseAsync(blockHash *results.Hash) futures.FutureGetBlockHeaderVerboseResult {
 	hash := ""
 	if blockHash != nil {
 		hash = blockHash.String()
@@ -148,7 +149,7 @@ See GetBlockHeader for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 15:23
  */
-func (c *Client) GetBlockHeaderAsync(blockHash *results.Hash) results.FutureGetBlockHeaderResult {
+func (c *Client) GetBlockHeaderAsync(blockHash *results.Hash) futures.FutureGetBlockHeaderResult {
 	hash := ""
 	if blockHash != nil {
 		hash = blockHash.String()
@@ -180,7 +181,7 @@ See GetBlockChainInfo for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 14:49
  */
-func (c *Client) GetBlockChainInfoAsync() results.FutureGetBlockChainInfoResult {
+func (c *Client) GetBlockChainInfoAsync() futures.FutureGetBlockChainInfoResult {
 	cmd := NewCommand("getblockchaininfo")
 	return c.sendCmd(cmd)
 }
@@ -207,7 +208,7 @@ See GetBlock for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 16:09
  */
-func (c *Client) GetBlockAsync(blockHash *results.Hash) results.FutureGetBlockResult {
+func (c *Client) GetBlockAsync(blockHash *results.Hash) futures.FutureGetBlockResult {
 	hash := ""
 	if blockHash != nil {
 		hash = blockHash.String()
@@ -239,7 +240,7 @@ See GetBlockVerbose for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 16:24
  */
-func (c *Client) GetBlockVerboseAsync(blockHash *results.Hash) results.FutureGetBlockVerboseResult {
+func (c *Client) GetBlockVerboseAsync(blockHash *results.Hash) futures.FutureGetBlockVerboseResult {
 	hash := ""
 	if blockHash != nil {
 		hash = blockHash.String()
@@ -272,7 +273,7 @@ See GetBlockVerboseTx or the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 16:52
  */
-func (c *Client) GetBlockVerboseTxAsync(blockHash *results.Hash) results.FutureGetBlockVerboseTXResult {
+func (c *Client) GetBlockVerboseTxAsync(blockHash *results.Hash) futures.FutureGetBlockVerboseTXResult {
 	hash := ""
 	if blockHash != nil {
 		hash = blockHash.String()
@@ -305,7 +306,7 @@ See GetRawMempool for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 19:51
  */
-func (c *Client) GetRawMempoolAsync() results.FutureGetRawMempoolResult {
+func (c *Client) GetRawMempoolAsync() futures.FutureGetRawMempoolResult {
 	cmd := NewCommand("getrawmempool", utils.Basis.Bool(false))
 	return c.sendCmd(cmd)
 }
@@ -333,7 +334,7 @@ See GetRawMempoolVerbose for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 20:10
  */
-func (c *Client) GetRawMempoolVerboseAsync() results.FutureGetRawMempoolVerboseResult {
+func (c *Client) GetRawMempoolVerboseAsync() futures.FutureGetRawMempoolVerboseResult {
 	cmd := NewCommand("getrawmempool", utils.Basis.Bool(true))
 	return c.sendCmd(cmd)
 }
@@ -362,7 +363,7 @@ See GetMempoolEntry for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 20:23
  */
-func (c *Client) GetMempoolEntryAsync(txHash string) results.FutureGetMempoolEntryResult {
+func (c *Client) GetMempoolEntryAsync(txHash string) futures.FutureGetMempoolEntryResult {
 	cmd := NewCommand("getmempoolentry", txHash)
 	return c.sendCmd(cmd)
 }
@@ -388,7 +389,7 @@ See VerifyChain for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 20:54
  */
-func (c *Client) VerifyChainAsync() results.FutureVerifyChainResult {
+func (c *Client) VerifyChainAsync() futures.FutureVerifyChainResult {
 	cmd := NewCommand("verifychain")
 	return c.sendCmd(cmd)
 }
@@ -416,7 +417,7 @@ See VerifyChainLevel for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 21:00
  */
-func (c *Client) VerifyChainLevelAsync(checkLevel int32) results.FutureVerifyChainResult {
+func (c *Client) VerifyChainLevelAsync(checkLevel int32) futures.FutureVerifyChainResult {
 	cmd := NewCommand("verifychain", &checkLevel)
 	return c.sendCmd(cmd)
 }
@@ -449,7 +450,7 @@ See VerifyChainBlocks for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 21:00
  */
-func (c *Client) VerifyChainBlocksAsync(checkLevel, numBlocks int32) results.FutureVerifyChainResult {
+func (c *Client) VerifyChainBlocksAsync(checkLevel, numBlocks int32) futures.FutureVerifyChainResult {
 	cmd := NewCommand("verifychain", &checkLevel, &numBlocks)
 	return c.sendCmd(cmd)
 }
@@ -484,7 +485,7 @@ See GetTxOut for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 21:07
  */
-func (c *Client) GetTxOutAsync(txHash *results.Hash, index uint32, mempool bool) results.FutureGetTxOutResult {
+func (c *Client) GetTxOutAsync(txHash *results.Hash, index uint32, mempool bool) futures.FutureGetTxOutResult {
 	hash := ""
 	if txHash != nil {
 		hash = txHash.String()
@@ -548,7 +549,7 @@ func (c *Client) GetTxOut(txHash *results.Hash, index uint32, mempool bool) (*re
 ////
 //// NOTE: This is a btcsuite extension ported from
 //// github.com/decred/dcrrpcclient.
-//func (c *Client) RescanBlocksAsync(blockHashes []Hash) results.FutureRescanBlocksResult {
+//func (c *Client) RescanBlocksAsync(blockHashes []Hash) futures.FutureRescanBlocksResult {
 //	strBlockHashes := make([]string, len(blockHashes))
 //	for i := range blockHashes {
 //		strBlockHashes[i] = blockHashes[i].String()
@@ -615,7 +616,7 @@ func (c *Client) GetTxOut(txHash *results.Hash, index uint32, mempool bool) (*re
 //// returned instance.
 ////
 //// See GetCFilter for the blocking version and more details.
-//func (c *Client) GetCFilterAsync(blockHash *results.Hash, filterType FilterType) results.FutureGetCFilterResult {
+//func (c *Client) GetCFilterAsync(blockHash *results.Hash, filterType FilterType) futures.FutureGetCFilterResult {
 //	hash := ""
 //	if blockHash != nil {
 //		hash = blockHash.String()
@@ -676,7 +677,7 @@ func (c *Client) GetTxOut(txHash *results.Hash, index uint32, mempool bool) (*re
 ////
 //// See GetCFilterHeader for the blocking version and more details.
 //func (c *Client) GetCFilterHeaderAsync(blockHash *results.Hash,
-//	filterType FilterType) results.FutureGetCFilterHeaderResult {
+//	filterType FilterType) futures.FutureGetCFilterHeaderResult {
 //	hash := ""
 //	if blockHash != nil {
 //		hash = blockHash.String()
