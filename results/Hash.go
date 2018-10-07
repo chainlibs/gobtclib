@@ -1,4 +1,4 @@
-package client
+package results
 
 import (
 	"encoding/hex"

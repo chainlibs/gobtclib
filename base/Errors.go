@@ -1,4 +1,4 @@
-package client
+package base
 
 import (
 	"errors"
@@ -116,12 +116,12 @@ var errorCodeStrings = map[ErrorCode]string{
 }
 
 // RPCErrorCode represents an error code to be used as a part of an RPCError
-// which is in turn used in a JSON-RPC Response object.
+// which is in turn used in a JSON-RPC JResponse object.
 //
 // A specific type is used to help ensure the wrong errors aren't used.
 type ErrorCode int
 
-// RPCError represents an error that is used as a part of a JSON-RPC Response
+// RPCError represents an error that is used as a part of a JSON-RPC JResponse
 // object.
 type Error struct {
 	Code    ErrorCode	 `json:"code,omitempty"`
@@ -138,7 +138,7 @@ func (e Error) Error() string {
 }
 
 // NewRPCError constructs and returns a new JSON-RPC error that is suitable
-// for use in a JSON-RPC Response object.
+// for use in a JSON-RPC JResponse object.
 func NewError(code ErrorCode, message string) *Error {
 	return &Error{
 		Code:    code,

@@ -2,6 +2,7 @@ package client
 
 import (
 	"github.com/chainlibs/gobtclib/utils"
+	"github.com/chainlibs/gobtclib/results"
 )
 
 /*
@@ -14,7 +15,7 @@ See GetBestBlockHash for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/14 13:18
  */
-func (c *Client) GetBestBlockHashAsync() FutureGetBestBlockHashResult {
+func (c *Client) GetBestBlockHashAsync() results.FutureGetBestBlockHashResult {
 	cmd := NewCommand("getbestblockhash")
 	return c.sendCmd(cmd)
 }
@@ -25,7 +26,7 @@ GetBestBlockHash returns the hash of the best block in the longest block chain.
  * Author: architect.bian
  * Date: 2018/09/14 13:15
  */
-func (c *Client) GetBestBlockHash() (*Hash, error) {
+func (c *Client) GetBestBlockHash() (*results.Hash, error) {
 	return c.GetBestBlockHashAsync().Receive()
 }
 
@@ -39,7 +40,7 @@ See GetBlockCount for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/14 12:49
  */
-func (c *Client) GetBlockCountAsync() FutureGetBlockCountResult {
+func (c *Client) GetBlockCountAsync() results.FutureGetBlockCountResult {
 	cmd := NewCommand("getblockcount")
 	return c.sendCmd(cmd)
 }
@@ -64,7 +65,7 @@ See GetDifficulty for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/14 17:35
  */
-func (c *Client) GetDifficultyAsync() FutureGetDifficultyResult {
+func (c *Client) GetDifficultyAsync() results.FutureGetDifficultyResult {
 	cmd := NewCommand("getdifficulty")
 	return c.sendCmd(cmd)
 }
@@ -90,7 +91,7 @@ See GetBlockHash for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/15 15:35
  */
-func (c *Client) GetBlockHashAsync(blockHeight int64) FutureGetBlockHashResult {
+func (c *Client) GetBlockHashAsync(blockHeight int64) results.FutureGetBlockHashResult {
 	cmd := NewCommand("getblockhash", blockHeight)
 	return c.sendCmd(cmd)
 }
@@ -101,7 +102,7 @@ GetBlockHash returns the hash of the block in the best block chain at the given 
  * Author: architect.bian
  * Date: 2018/09/15 15:34
  */
-func (c *Client) GetBlockHash(blockHeight int64) (*Hash, error) {
+func (c *Client) GetBlockHash(blockHeight int64) (*results.Hash, error) {
 	return c.GetBlockHashAsync(blockHeight).Receive()
 }
 
@@ -115,7 +116,7 @@ See GetBlockHeader for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/15 17:51
  */
-func (c *Client) GetBlockHeaderVerboseAsync(blockHash *Hash) FutureGetBlockHeaderVerboseResult {
+func (c *Client) GetBlockHeaderVerboseAsync(blockHash *results.Hash) results.FutureGetBlockHeaderVerboseResult {
 	hash := ""
 	if blockHash != nil {
 		hash = blockHash.String()
@@ -133,7 +134,7 @@ See GetBlockHeader to retrieve a blockheader instead.
  * Author: architect.bian
  * Date: 2018/09/15 17:51
  */
-func (c *Client) GetBlockHeaderVerbose(blockHash *Hash) (*GetBlockHeaderVerboseResult, error) {
+func (c *Client) GetBlockHeaderVerbose(blockHash *results.Hash) (*results.GetBlockHeaderVerboseResult, error) {
 	return c.GetBlockHeaderVerboseAsync(blockHash).Receive()
 }
 
@@ -147,7 +148,7 @@ See GetBlockHeader for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 15:23
  */
-func (c *Client) GetBlockHeaderAsync(blockHash *Hash) FutureGetBlockHeaderResult {
+func (c *Client) GetBlockHeaderAsync(blockHash *results.Hash) results.FutureGetBlockHeaderResult {
 	hash := ""
 	if blockHash != nil {
 		hash = blockHash.String()
@@ -165,7 +166,7 @@ block instead.
  * Author: architect.bian
  * Date: 2018/09/17 15:22
  */
-func (c *Client) GetBlockHeader(blockHash *Hash) (*BlockHeader, error) {
+func (c *Client) GetBlockHeader(blockHash *results.Hash) (*results.BlockHeader, error) {
 	return c.GetBlockHeaderAsync(blockHash).Receive()
 }
 
@@ -179,7 +180,7 @@ See GetBlockChainInfo for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 14:49
  */
-func (c *Client) GetBlockChainInfoAsync() FutureGetBlockChainInfoResult {
+func (c *Client) GetBlockChainInfoAsync() results.FutureGetBlockChainInfoResult {
 	cmd := NewCommand("getblockchaininfo")
 	return c.sendCmd(cmd)
 }
@@ -192,7 +193,7 @@ of the main chain.
  * Author: architect.bian
  * Date: 2018/09/17 14:47
  */
-func (c *Client) GetBlockChainInfo() (*GetBlockChainInfoResult, error) {
+func (c *Client) GetBlockChainInfo() (*results.GetBlockChainInfoResult, error) {
 	return c.GetBlockChainInfoAsync().Receive()
 }
 
@@ -206,7 +207,7 @@ See GetBlock for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 16:09
  */
-func (c *Client) GetBlockAsync(blockHash *Hash) FutureGetBlockResult {
+func (c *Client) GetBlockAsync(blockHash *results.Hash) results.FutureGetBlockResult {
 	hash := ""
 	if blockHash != nil {
 		hash = blockHash.String()
@@ -224,7 +225,7 @@ block instead.
  * Author: architect.bian
  * Date: 2018/09/17 16:09
  */
-func (c *Client) GetBlock(blockHash *Hash) (*MsgBlock, error) {
+func (c *Client) GetBlock(blockHash *results.Hash) (*results.MsgBlock, error) {
 	return c.GetBlockAsync(blockHash).Receive()
 }
 
@@ -238,7 +239,7 @@ See GetBlockVerbose for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 16:24
  */
-func (c *Client) GetBlockVerboseAsync(blockHash *Hash) FutureGetBlockVerboseResult {
+func (c *Client) GetBlockVerboseAsync(blockHash *results.Hash) results.FutureGetBlockVerboseResult {
 	hash := ""
 	if blockHash != nil {
 		hash = blockHash.String()
@@ -257,7 +258,7 @@ See GetBlock to retrieve a raw block instead.
  * Author: architect.bian
  * Date: 2018/09/17 16:21
  */
-func (c *Client) GetBlockVerbose(blockHash *Hash) (*GetBlockVerboseResult, error) {
+func (c *Client) GetBlockVerbose(blockHash *results.Hash) (*results.GetBlockVerboseResult, error) {
 	return c.GetBlockVerboseAsync(blockHash).Receive()
 }
 
@@ -271,7 +272,7 @@ See GetBlockVerboseTx or the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 16:52
  */
-func (c *Client) GetBlockVerboseTxAsync(blockHash *Hash) FutureGetBlockVerboseTXResult {
+func (c *Client) GetBlockVerboseTxAsync(blockHash *results.Hash) results.FutureGetBlockVerboseTXResult {
 	hash := ""
 	if blockHash != nil {
 		hash = blockHash.String()
@@ -290,7 +291,7 @@ See GetBlock to retrieve a raw block instead.
  * Author: architect.bian
  * Date: 2018/09/17 16:52
  */
-func (c *Client) GetBlockVerboseTx(blockHash *Hash) (*GetBlockVerboseTXResult, error) {
+func (c *Client) GetBlockVerboseTx(blockHash *results.Hash) (*results.GetBlockVerboseTXResult, error) {
 	return c.GetBlockVerboseTxAsync(blockHash).Receive()
 }
 
@@ -304,7 +305,7 @@ See GetRawMempool for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 19:51
  */
-func (c *Client) GetRawMempoolAsync() FutureGetRawMempoolResult {
+func (c *Client) GetRawMempoolAsync() results.FutureGetRawMempoolResult {
 	cmd := NewCommand("getrawmempool", utils.Basis.Bool(false))
 	return c.sendCmd(cmd)
 }
@@ -318,7 +319,7 @@ the transactions instead.
  * Author: architect.bian
  * Date: 2018/09/17 19:50
  */
-func (c *Client) GetRawMempool() ([]*Hash, error) {
+func (c *Client) GetRawMempool() ([]*results.Hash, error) {
 	return c.GetRawMempoolAsync().Receive()
 }
 
@@ -332,7 +333,7 @@ See GetRawMempoolVerbose for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 20:10
  */
-func (c *Client) GetRawMempoolVerboseAsync() FutureGetRawMempoolVerboseResult {
+func (c *Client) GetRawMempoolVerboseAsync() results.FutureGetRawMempoolVerboseResult {
 	cmd := NewCommand("getrawmempool", utils.Basis.Bool(true))
 	return c.sendCmd(cmd)
 }
@@ -347,7 +348,7 @@ See GetRawMempool to retrieve only the transaction hashes instead.
  * Author: architect.bian
  * Date: 2018/09/17 20:09
  */
-func (c *Client) GetRawMempoolVerbose() (map[string]GetRawMempoolVerboseResult, error) {
+func (c *Client) GetRawMempoolVerbose() (map[string]results.GetRawMempoolVerboseResult, error) {
 	return c.GetRawMempoolVerboseAsync().Receive()
 }
 
@@ -361,7 +362,7 @@ See GetMempoolEntry for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 20:23
  */
-func (c *Client) GetMempoolEntryAsync(txHash string) FutureGetMempoolEntryResult {
+func (c *Client) GetMempoolEntryAsync(txHash string) results.FutureGetMempoolEntryResult {
 	cmd := NewCommand("getmempoolentry", txHash)
 	return c.sendCmd(cmd)
 }
@@ -373,7 +374,7 @@ transaction in the memory pool given its hash.
  * Author: architect.bian
  * Date: 2018/09/17 20:23
  */
-func (c *Client) GetMempoolEntry(txHash string) (*GetMempoolEntryResult, error) { //TODO txhash changed to hash?
+func (c *Client) GetMempoolEntry(txHash string) (*results.GetMempoolEntryResult, error) { //TODO txhash changed to hash?
 	return c.GetMempoolEntryAsync(txHash).Receive()
 }
 
@@ -387,7 +388,7 @@ See VerifyChain for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 20:54
  */
-func (c *Client) VerifyChainAsync() FutureVerifyChainResult {
+func (c *Client) VerifyChainAsync() results.FutureVerifyChainResult {
 	cmd := NewCommand("verifychain")
 	return c.sendCmd(cmd)
 }
@@ -415,7 +416,7 @@ See VerifyChainLevel for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 21:00
  */
-func (c *Client) VerifyChainLevelAsync(checkLevel int32) FutureVerifyChainResult {
+func (c *Client) VerifyChainLevelAsync(checkLevel int32) results.FutureVerifyChainResult {
 	cmd := NewCommand("verifychain", &checkLevel)
 	return c.sendCmd(cmd)
 }
@@ -448,7 +449,7 @@ See VerifyChainBlocks for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 21:00
  */
-func (c *Client) VerifyChainBlocksAsync(checkLevel, numBlocks int32) FutureVerifyChainResult {
+func (c *Client) VerifyChainBlocksAsync(checkLevel, numBlocks int32) results.FutureVerifyChainResult {
 	cmd := NewCommand("verifychain", &checkLevel, &numBlocks)
 	return c.sendCmd(cmd)
 }
@@ -483,7 +484,7 @@ See GetTxOut for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 21:07
  */
-func (c *Client) GetTxOutAsync(txHash *Hash, index uint32, mempool bool) FutureGetTxOutResult {
+func (c *Client) GetTxOutAsync(txHash *results.Hash, index uint32, mempool bool) results.FutureGetTxOutResult {
 	hash := ""
 	if txHash != nil {
 		hash = txHash.String()
@@ -499,7 +500,7 @@ nil, otherwise.
  * Author: architect.bian
  * Date: 2018/09/17 21:07
  */
-func (c *Client) GetTxOut(txHash *Hash, index uint32, mempool bool) (*GetTxOutResult, error) {
+func (c *Client) GetTxOut(txHash *results.Hash, index uint32, mempool bool) (*results.GetTxOutResult, error) {
 	return c.GetTxOutAsync(txHash, index, mempool).Receive()
 }
 
@@ -547,7 +548,7 @@ func (c *Client) GetTxOut(txHash *Hash, index uint32, mempool bool) (*GetTxOutRe
 ////
 //// NOTE: This is a btcsuite extension ported from
 //// github.com/decred/dcrrpcclient.
-//func (c *Client) RescanBlocksAsync(blockHashes []Hash) FutureRescanBlocksResult {
+//func (c *Client) RescanBlocksAsync(blockHashes []Hash) results.FutureRescanBlocksResult {
 //	strBlockHashes := make([]string, len(blockHashes))
 //	for i := range blockHashes {
 //		strBlockHashes[i] = blockHashes[i].String()
@@ -573,7 +574,7 @@ func (c *Client) GetTxOut(txHash *Hash, index uint32, mempool bool) (*GetTxOutRe
 //
 //// Receive waits for the response promised by the future and returns the raw
 //// filter requested from the server given its block hash.
-//func (r FutureGetCFilterResult) Receive() (*MsgCFilter, error) {
+//func (r FutureGetCFilterResult) Receive() (*results.MsgCFilter, error) {
 //	res, err := receiveFuture(r)
 //	if err != nil {
 //		return nil, err
@@ -614,7 +615,7 @@ func (c *Client) GetTxOut(txHash *Hash, index uint32, mempool bool) (*GetTxOutRe
 //// returned instance.
 ////
 //// See GetCFilter for the blocking version and more details.
-//func (c *Client) GetCFilterAsync(blockHash *Hash, filterType FilterType) FutureGetCFilterResult {
+//func (c *Client) GetCFilterAsync(blockHash *results.Hash, filterType FilterType) results.FutureGetCFilterResult {
 //	hash := ""
 //	if blockHash != nil {
 //		hash = blockHash.String()
@@ -628,7 +629,7 @@ func (c *Client) GetTxOut(txHash *Hash, index uint32, mempool bool) (*GetTxOutRe
 //}
 //
 ////GetCFilter returns a raw filter from the server given its block hash.
-//func (c *Client) GetCFilter(blockHash *Hash, filterType FilterType) (*MsgCFilter, error) {
+//func (c *Client) GetCFilter(blockHash *results.Hash, filterType FilterType) (*results.MsgCFilter, error) {
 //	return c.GetCFilterAsync(blockHash, filterType).Receive()
 //}
 
@@ -638,7 +639,7 @@ func (c *Client) GetTxOut(txHash *Hash, index uint32, mempool bool) (*GetTxOutRe
 //
 //// Receive waits for the response promised by the future and returns the raw
 //// filter header requested from the server given its block hash.
-//func (r FutureGetCFilterHeaderResult) Receive() (*MsgCFHeaders, error) {
+//func (r FutureGetCFilterHeaderResult) Receive() (*results.MsgCFHeaders, error) {
 //	res, err := receiveFuture(r)
 //	if err != nil {
 //		return nil, err
@@ -674,8 +675,8 @@ func (c *Client) GetTxOut(txHash *Hash, index uint32, mempool bool) (*GetTxOutRe
 //// on the returned instance.
 ////
 //// See GetCFilterHeader for the blocking version and more details.
-//func (c *Client) GetCFilterHeaderAsync(blockHash *Hash,
-//	filterType FilterType) FutureGetCFilterHeaderResult {
+//func (c *Client) GetCFilterHeaderAsync(blockHash *results.Hash,
+//	filterType FilterType) results.FutureGetCFilterHeaderResult {
 //	hash := ""
 //	if blockHash != nil {
 //		hash = blockHash.String()
@@ -690,7 +691,7 @@ func (c *Client) GetTxOut(txHash *Hash, index uint32, mempool bool) (*GetTxOutRe
 //
 //// GetCFilterHeader returns a raw filter header from the server given its block
 //// hash.
-//func (c *Client) GetCFilterHeader(blockHash *Hash,
-//	filterType FilterType) (*MsgCFHeaders, error) {
+//func (c *Client) GetCFilterHeader(blockHash *results.Hash,
+//	filterType FilterType) (*results.MsgCFHeaders, error) {
 //	return c.GetCFilterHeaderAsync(blockHash, filterType).Receive()
 //}

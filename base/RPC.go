@@ -1,4 +1,4 @@
-package client
+package base
 
 import (
 	"fmt"
@@ -30,7 +30,7 @@ func IsValidIDType(id interface{}) bool {
 
 /*
 Description:
-Request is a type for raw JSON-RPC 1.0 requests.  The Method field identifies
+JRequest is a type for raw JSON-RPC 1.0 requests.  The Method field identifies
 the specific command type which in turns leads to different parameters.
 Callers typically will not use this directly since this package provides a
 statically typed command infrastructure which handles creation of these
@@ -39,7 +39,7 @@ construct raw requests for some reason.
  * Author: architect.bian
  * Date: 2018/08/26 17:27
  */
-type Request struct { //TODO? JRequest? JRPC?
+type JRequest struct {//TODO? ? JRPC?
 	Jsonrpc string            `json:"jsonrpc"`
 	Method  string            `json:"method"`
 	Params  []json.RawMessage `json:"params"`
@@ -59,7 +59,7 @@ function with that command to generate the marshalled JSON-RPC request.
  * Author: architect.bian
  * Date: 2018/08/26 17:29
  */
-func NewRequest(id interface{}, method string, params []interface{}) (*Request, error) { //TODO NewJRequest NewJRPC?
+func NewRequest(id interface{}, method string, params []interface{}) (*JRequest, error) { //TODO NewJRequest NewJRPC?
 	if !IsValidIDType(id) {
 		return nil, makeInvalidIDError(ErrInvalidType, id)
 	}
@@ -74,7 +74,7 @@ func NewRequest(id interface{}, method string, params []interface{}) (*Request, 
 		rawParams = append(rawParams, rawMessage)
 	}
 
-	return &Request{
+	return &JRequest{
 		Jsonrpc: "1.0",
 		ID:      id,
 		Method:  method,
@@ -84,13 +84,13 @@ func NewRequest(id interface{}, method string, params []interface{}) (*Request, 
 
 /*
 Description:
-Response is the general form of a JSON-RPC response.  The type of the Result
+JResponse is the general form of a JSON-RPC response.  The type of the Result
 field varies from one command to the next, so it is implemented as an
 interface.  The ID field has to be a pointer for Go to put a null in it when empty.
  * Author: architect.bian
  * Date: 2018/08/26 17:35
  */
-type Response struct { //TODO JResponse?
+type JResponse struct {//TODO ?
 	Result json.RawMessage `json:"result"`
 	Error  *RPCError       `json:"error"`
 	ID     *interface{}    `json:"id"`
@@ -106,13 +106,13 @@ response to send over the wire with the MarshalResponse function.
  * Author: architect.bian
  * Date: 2018/08/26 17:36
  */
-func NewResponse(id interface{}, marshalledResult []byte, rpcErr *RPCError) (*Response, error) {
+func NewResponse(id interface{}, marshalledResult []byte, rpcErr *RPCError) (*JResponse, error) {
 	if !IsValidIDType(id) {
 		return nil, makeInvalidIDError(ErrInvalidType, id)
 	}
 
 	pid := &id
-	return &Response{
+	return &JResponse{
 		Result: marshalledResult,
 		Error:  rpcErr,
 		ID:     pid,
@@ -141,7 +141,7 @@ func MarshalResponse(id interface{}, result interface{}, rpcErr *RPCError) ([]by
 /*
 Description:
 NewRPCError constructs and returns a new JSON-RPC error that is suitable
-for use in a JSON-RPC Response object.
+for use in a JSON-RPC JResponse object.
  * Author: architect.bian
  * Date: 2018/08/26 17:46
  */
@@ -155,7 +155,7 @@ func NewRPCError(code RPCErrorCode, message string) *RPCError {
 /*
 Description:
 RPCErrorCode represents an error code to be used as a part of an RPCError
-which is in turn used in a JSON-RPC Response object.
+which is in turn used in a JSON-RPC JResponse object.
 
 A specific type is used to help ensure the wrong errors aren't used.
  * Author: architect.bian
@@ -165,7 +165,7 @@ type RPCErrorCode int
 
 /*
 Description:
-RPCError represents an error that is used as a part of a JSON-RPC Response object.
+RPCError represents an error that is used as a part of a JSON-RPC JResponse object.
  * Author: architect.bian
  * Date: 2018/08/26 17:16
  */

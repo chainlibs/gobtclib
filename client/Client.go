@@ -11,6 +11,8 @@ import (
 	"github.com/chainlibs/gobtclib/utils"
 	"encoding/json"
 	"github.com/gobasis/log"
+	"github.com/chainlibs/gobtclib/base"
+	"github.com/chainlibs/gobtclib/futures"
 )
 
 /*
@@ -31,7 +33,7 @@ func NewClient(config *Config) (*Client) {
 	client := &Client{
 		config:          config,
 		httpClient:      httpClient,
-		requestsChan:    make(chan *requestDetail, requestsChanBufferSize),
+		requestsChan:    make(chan *base.RequestDetail, requestsChanBufferSize),
 		disconnect:      make(chan struct{}),
 		shutdown:        make(chan struct{}),
 	}
@@ -63,7 +65,7 @@ type Client struct {
 	// disconnected indicated whether or not the server is disconnected.
 	disconnected bool
 	// Networking infrastructure.
-	requestsChan chan *requestDetail
+	requestsChan chan *base.RequestDetail
 	disconnect      chan struct{}
 	shutdown        chan struct{}
 	wg              sync.WaitGroup
@@ -110,9 +112,9 @@ cleanup:
 	for {
 		select {
 		case detail := <-c.requestsChan:
-			detail.jsonRequest.responseChan <- &response{
-				result: nil,
-				err:    ErrClientShutdown,
+			detail.JsonRequest.ResponseChan <- &base.Response{
+				Result: nil,
+				Err:    base.ErrClientShutdown,
 			}
 		default:
 			break cleanup
@@ -124,18 +126,18 @@ cleanup:
 
 /*
 Description:
-handleRequestDetail handles performing the passed HTTP request, reading the
+handlebase.RequestDetail handles performing the passed HTTP request, reading the
 result, unmarshalling it, and delivering the unmarshalled result to the
 provided response channel.
  * Author: architect.bian
  * Date: 2018/10/07 18:26
  */
-func (c *Client) handleRequestDetail(request *requestDetail) {
-	jsonReq := request.jsonRequest
-	log.Debug("Sending command", "command", jsonReq.method, "id", jsonReq.id)
-	httpResponse, err := c.httpClient.Do(request.httpRequest)
+func (c *Client) handleRequestDetail(request *base.RequestDetail) {
+	jsonReq := request.JsonRequest
+	log.Debug("Sending command", "command", jsonReq.Method, "id", jsonReq.Id)
+	httpResponse, err := c.httpClient.Do(request.HttpRequest)
 	if err != nil {
-		jsonReq.responseChan <- &response{err: err}
+		jsonReq.ResponseChan <- &base.Response{Err: err}
 		return
 	}
 	// Read the raw bytes and close the response.
@@ -143,23 +145,23 @@ func (c *Client) handleRequestDetail(request *requestDetail) {
 	httpResponse.Body.Close()
 	if err != nil {
 		err = fmt.Errorf("error reading json reply: %v", err)
-		jsonReq.responseChan <- &response{err: err}
+		jsonReq.ResponseChan <- &base.Response{Err: err}
 		return
 	}
 	log.Debug("receive result data after posted", "result", string(respBytes))
 	// Try to unmarshal the response as a regular JSON-RPC response.
-	var resp rawResponse
+	var resp base.RawResponse
 	err = json.Unmarshal(respBytes, &resp)
 	if err != nil {
 		// When the response itself isn't a valid JSON-RPC response
 		// return an error which includes the HTTP status code and raw
 		// response bytes.
 		err = fmt.Errorf("status code: %d, response: %q", httpResponse.StatusCode, string(respBytes))
-		jsonReq.responseChan <- &response{err: err}
+		jsonReq.ResponseChan <- &base.Response{Err: err}
 		return
 	}
-	res, err := resp.result()
-	jsonReq.responseChan <- &response{result: res, err: err}
+	res, err := resp.GetResult()
+	jsonReq.ResponseChan <- &base.Response{Result: res, Err: err}
 }
 
 /*
@@ -170,17 +172,17 @@ so it will not block until the send channel is full.
  * Author: architect.bian
  * Date: 2018/08/26 19:29
  */
-func (c *Client) sendPostRequest(req *http.Request, jsonReq *jsonRequest) {
+func (c *Client) sendPostRequest(req *http.Request, jsonReq *base.JsonRequest) {
 	// Don't send the request if shutting down.
 	select {
 	case <-c.shutdown:
-		jsonReq.responseChan <- &response{result: nil, err: ErrClientShutdown}
+		jsonReq.ResponseChan <- &base.Response{Result: nil, Err: base.ErrClientShutdown}
 	default:
 	}
 
-	c.requestsChan <- &requestDetail{
-		jsonRequest: jsonReq,
-		httpRequest: req,
+	c.requestsChan <- &base.RequestDetail{
+		JsonRequest: jsonReq,
+		HttpRequest: req,
 	}
 }
 
@@ -194,17 +196,17 @@ depending on several factors including the remote server configuration.
  * Author: architect.bian
  * Date: 2018/08/26 19:29
  */
-func (c *Client) sendPost(jsonReq *jsonRequest) {
+func (c *Client) sendPost(jsonReq *base.JsonRequest) {
 	// Generate a request to the configured RPC server.
 	protocol := "http"
 	if c.config.EnableTLS {
 		protocol = "https"
 	}
 	url := protocol + "://" + c.config.Host
-	bodyReader := bytes.NewReader(jsonReq.marshalledJSON)
+	bodyReader := bytes.NewReader(jsonReq.MarshalledJSON)
 	request, err := http.NewRequest("POST", url, bodyReader)
 	if err != nil {
-		jsonReq.responseChan <- &response{result: nil, err: err}
+		jsonReq.ResponseChan <- &base.Response{Result: nil, Err: err}
 		return
 	}
 	request.Close = true
@@ -221,7 +223,7 @@ provided response channel for the reply.
  * Author: architect.bian
  * Date: 2018/08/26 19:19
  */
-func (c *Client) sendRequest(jReq *jsonRequest) {
+func (c *Client) sendRequest(jReq *base.JsonRequest) {
 	// Choose which marshal and send function to use depending on whether
 	// the client running in HTTP POST mode or not.  When running in HTTP
 	// POST mode, the command is issued via an HTTP client.  Otherwise,
@@ -254,22 +256,22 @@ configuration of the client.
  * Author: architect.bian
  * Date: 2018/08/26 18:46
  */
-func (c *Client) sendCmd(cmd *Command) chan *response {
+func (c *Client) sendCmd(cmd *Command) chan *base.Response {
 	// Marshal the command.
 	id := c.NextID()
 	marshalledJSON, err := MarshalCmd(id, cmd)
 	if err != nil {
-		return newFutureError(err)
+		return futures.NewFutureError(err)
 	}
 	log.Debug("posting json content", "json", string(marshalledJSON))
 	// Generate the request and send it along with a channel to respond on.
-	responseChan := make(chan *response, 1)
-	jReq := &jsonRequest{
-		id:             id,
-		method:         cmd.name,
-		cmd:            cmd,
-		marshalledJSON: marshalledJSON,
-		responseChan:   responseChan,
+	responseChan := make(chan *base.Response, 1)
+	jReq := &base.JsonRequest{
+		Id:             id,
+		Method:         cmd.name,
+		Cmd:            cmd,
+		MarshalledJSON: marshalledJSON,
+		ResponseChan:   responseChan,
 	}
 	c.sendRequest(jReq)
 
@@ -287,7 +289,7 @@ field in the reply if there is one.
 func (c *Client) sendCmdAndWait(cmd *Command) (interface{}, error) {
 	// Marshal the command to JSON-RPC, send it to the connected server, and
 	// wait for a response on the returned channel.
-	return receiveFuture(c.sendCmd(cmd))
+	return futures.ReceiveFuture(c.sendCmd(cmd))
 }
 
 /*

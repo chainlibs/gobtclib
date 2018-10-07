@@ -1,4 +1,4 @@
-package client
+package results
 
 import (
 	"encoding/json"
@@ -6,6 +6,8 @@ import (
 	"encoding/hex"
 	"bytes"
 	"io"
+	"github.com/chainlibs/gobtclib/base"
+	"github.com/chainlibs/gobtclib/futures"
 )
 
 /*
@@ -15,7 +17,7 @@ GetBestBlockAsync RPC invocation (or an applicable error).
  * Author: architect.bian
  * Date: 2018/09/14 13:20
  */
-type FutureGetBestBlockHashResult chan *response
+type FutureGetBestBlockHashResult chan *base.Response
 
 /*
 Description:
@@ -25,7 +27,7 @@ the best block in the longest block chain.
  * Date: 2018/09/14 13:20
  */
 func (r FutureGetBestBlockHashResult) Receive() (*Hash, error) {
-	res, err := receiveFuture(r)
+	res, err := futures.ReceiveFuture(r)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +48,7 @@ GetBlockCountAsync RPC invocation (or an applicable error).
  * Author: architect.bian
  * Date: 2018/09/14 12:55
  */
-type FutureGetBlockCountResult chan *response
+type FutureGetBlockCountResult chan *base.Response
 
 /*
 Description:
@@ -56,7 +58,7 @@ of blocks in the longest block chain.
  * Date: 2018/09/14 12:59
  */
 func (r FutureGetBlockCountResult) Receive() (int64, error) {
-	res, err := receiveFuture(r)
+	res, err := futures.ReceiveFuture(r)
 	if err != nil {
 		return -1, err
 	}
@@ -77,7 +79,7 @@ GetDifficultyAsync RPC invocation (or an applicable error).
  * Author: architect.bian
  * Date: 2018/09/14 17:36
  */
-type FutureGetDifficultyResult chan *response
+type FutureGetDifficultyResult chan *base.Response
 
 /*
 Description:
@@ -87,7 +89,7 @@ proof-of-work difficulty as a multiple of the minimum difficulty.
  * Date: 2018/09/14 17:36
  */
 func (r FutureGetDifficultyResult) Receive() (float64, error) {
-	res, err := receiveFuture(r)
+	res, err := futures.ReceiveFuture(r)
 	if err != nil {
 		return 0, err
 	}
@@ -108,7 +110,7 @@ GetBlockHashAsync RPC invocation (or an applicable error).
  * Author: architect.bian
  * Date: 2018/09/15 15:44
  */
-type FutureGetBlockHashResult chan *response
+type FutureGetBlockHashResult chan *base.Response
 
 /*
 Description:
@@ -118,7 +120,7 @@ the block in the best block chain at the given height.
  * Date: 2018/09/15 15:45
  */
 func (r FutureGetBlockHashResult) Receive() (*Hash, error) {
-	res, err := receiveFuture(r)
+	res, err := futures.ReceiveFuture(r)
 	if err != nil {
 		return nil, err
 	}
@@ -162,7 +164,7 @@ GetBlockAsync RPC invocation (or an applicable error).
  * Author: architect.bian
  * Date: 2018/09/15 17:52
  */
-type FutureGetBlockHeaderVerboseResult chan *response
+type FutureGetBlockHeaderVerboseResult chan *base.Response
 
 /*
 Description:
@@ -172,7 +174,7 @@ data structure of the blockheader requested from the server given its hash.
  * Date: 2018/09/15 17:52
  */
 func (r FutureGetBlockHeaderVerboseResult) Receive() (*GetBlockHeaderVerboseResult, error) {
-	res, err := receiveFuture(r)
+	res, err := futures.ReceiveFuture(r)
 	if err != nil {
 		return nil, err
 	}
@@ -242,7 +244,7 @@ GetBlockHeaderAsync RPC invocation (or an applicable error).
  * Author: architect.bian
  * Date: 2018/09/17 15:23
  */
-type FutureGetBlockHeaderResult chan *response
+type FutureGetBlockHeaderResult chan *base.Response
 
 /*
 Description:
@@ -252,7 +254,7 @@ blockheader requested from the server given its hash.
  * Date: 2018/09/17 15:23
  */
 func (r FutureGetBlockHeaderResult) Receive() (*BlockHeader, error) {
-	res, err := receiveFuture(r)
+	res, err := futures.ReceiveFuture(r)
 	if err != nil {
 		return nil, err
 	}
@@ -337,7 +339,7 @@ GetBlockChainInfoAsync RPC invocation (or an applicable error).
  * Author: architect.bian
  * Date: 2018/09/17 14:51
  */
-type FutureGetBlockChainInfoResult chan *response
+type FutureGetBlockChainInfoResult chan *base.Response
 
 /*
 Description:
@@ -347,7 +349,7 @@ result provided by the server.
  * Date: 2018/09/17 14:52
  */
 func (r FutureGetBlockChainInfoResult) Receive() (*GetBlockChainInfoResult, error) {
-	res, err := receiveFuture(r)
+	res, err := futures.ReceiveFuture(r)
 	if err != nil {
 		return nil, err
 	}
@@ -495,7 +497,7 @@ GetBlockAsync RPC invocation (or an applicable error).
  * Author: architect.bian
  * Date: 2018/09/17 16:11
  */
-type FutureGetBlockResult chan *response
+type FutureGetBlockResult chan *base.Response
 
 /*
 Description:
@@ -505,7 +507,7 @@ block requested from the server given its hash.
  * Date: 2018/09/17 16:12
  */
 func (r FutureGetBlockResult) Receive() (*MsgBlock, error) {
-	res, err := receiveFuture(r)
+	res, err := futures.ReceiveFuture(r)
 	if err != nil {
 		return nil, err
 	}
@@ -679,7 +681,7 @@ GetBlockVerboseAsync RPC invocation (or an applicable error).
  * Author: architect.bian
  * Date: 2018/09/17 16:26
  */
-type FutureGetBlockVerboseResult chan *response
+type FutureGetBlockVerboseResult chan *base.Response
 
 /*
 Description:
@@ -689,7 +691,7 @@ structure from the server with information about the requested block.
  * Date: 2018/09/17 16:26
  */
 func (r FutureGetBlockVerboseResult) Receive() (*GetBlockVerboseResult, error) {
-	res, err := receiveFuture(r)
+	res, err := futures.ReceiveFuture(r)
 	if err != nil {
 		return nil, err
 	}
@@ -723,7 +725,7 @@ GetBlockVerboseTXAsync RPC invocation (or an applicable error).
  * Author: architect.bian
  * Date: 2018/09/17 16:26
  */
-type FutureGetBlockVerboseTXResult chan *response
+type FutureGetBlockVerboseTXResult chan *base.Response
 
 /*
 Description:
@@ -733,7 +735,7 @@ structure from the server with information about the requested block.
  * Date: 2018/09/17 16:26
  */
 func (r FutureGetBlockVerboseTXResult) Receive() (*GetBlockVerboseTXResult, error) {
-	res, err := receiveFuture(r)
+	res, err := futures.ReceiveFuture(r)
 	if err != nil {
 		return nil, err
 	}
@@ -754,7 +756,7 @@ GetRawMempoolAsync RPC invocation (or an applicable error).
  * Author: architect.bian
  * Date: 2018/09/17 19:54
  */
-type FutureGetRawMempoolResult chan *response
+type FutureGetRawMempoolResult chan *base.Response
 
 /*
 Description:
@@ -764,7 +766,7 @@ of all transactions in the memory pool.
  * Date: 2018/09/17 19:54
  */
 func (r FutureGetRawMempoolResult) Receive() ([]*Hash, error) {
-	res, err := receiveFuture(r)
+	res, err := futures.ReceiveFuture(r)
 	if err != nil {
 		return nil, err
 	}
@@ -815,7 +817,7 @@ a GetRawMempoolVerboseAsync RPC invocation (or an applicable error).
  * Author: architect.bian
  * Date: 2018/09/17 20:11
  */
-type FutureGetRawMempoolVerboseResult chan *response
+type FutureGetRawMempoolVerboseResult chan *base.Response
 
 /*
 Description:
@@ -826,7 +828,7 @@ transaction for all transactions in the memory pool.
  * Date: 2018/09/17 20:11
  */
 func (r FutureGetRawMempoolVerboseResult) Receive() (map[string]GetRawMempoolVerboseResult, error) {
-	res, err := receiveFuture(r)
+	res, err := futures.ReceiveFuture(r)
 	if err != nil {
 		return nil, err
 	}
@@ -870,7 +872,7 @@ GetMempoolEntryAsync RPC invocation (or an applicable error).
  * Author: architect.bian
  * Date: 2018/09/17 20:24
  */
-type FutureGetMempoolEntryResult chan *response
+type FutureGetMempoolEntryResult chan *base.Response
 
 /*
 Description:
@@ -881,7 +883,7 @@ its hash.
  * Date: 2018/09/17 20:24
  */
 func (r FutureGetMempoolEntryResult) Receive() (*GetMempoolEntryResult, error) {
-	res, err := receiveFuture(r)
+	res, err := futures.ReceiveFuture(r)
 	if err != nil {
 		return nil, err
 	}
@@ -904,7 +906,7 @@ invocation (or an applicable error).
  * Author: architect.bian
  * Date: 2018/09/17 20:54
  */
-type FutureVerifyChainResult chan *response
+type FutureVerifyChainResult chan *base.Response
 
 /*
 Description:
@@ -915,7 +917,7 @@ to verify specified in the original call.
  * Date: 2018/09/17 20:54
  */
 func (r FutureVerifyChainResult) Receive() (bool, error) {
-	res, err := receiveFuture(r)
+	res, err := futures.ReceiveFuture(r)
 	if err != nil {
 		return false, err
 	}
@@ -945,7 +947,7 @@ GetTxOutAsync RPC invocation (or an applicable error).
  * Author: architect.bian
  * Date: 2018/09/17 21:08
  */
-type FutureGetTxOutResult chan *response
+type FutureGetTxOutResult chan *base.Response
 
 /*
 Description:
@@ -955,7 +957,7 @@ transaction given its hash.
  * Date: 2018/09/17 21:08
  */
 func (r FutureGetTxOutResult) Receive() (*GetTxOutResult, error) {
-	res, err := receiveFuture(r)
+	res, err := futures.ReceiveFuture(r)
 	if err != nil {
 		return nil, err
 	}
