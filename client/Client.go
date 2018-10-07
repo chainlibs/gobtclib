@@ -82,61 +82,6 @@ func (c *Client) Startup() *Client {
 	return c
 }
 
-
-/*
-Description:
-NextID returns the next id to be used when sending a JSON-RPC message.  This
-ID allows responses to be associated with particular requestsChan per the
-JSON-RPC specification.  Typically the consumer of the client does not need
-to call this function, however, if a custom request is being created and used
-this function should be used to ensure the ID is unique amongst all requestsChan
-being made.
- * Author: architect.bian
- * Date: 2018/08/26 14:30
- */
-func (c *Client) NextID() uint64 {
-	return atomic.AddUint64(&c.id, 1)
-}
-
-// handleRequestDetail handles performing the passed HTTP request, reading the
-// result, unmarshalling it, and delivering the unmarshalled result to the
-// provided response channel.
-func (c *Client) handleRequestDetail(details *requestDetail) {
-	jReq := details.jsonRequest
-	log.Debug("Sending command", "command", jReq.method, "id", jReq.id)
-	httpResponse, err := c.httpClient.Do(details.httpRequest)
-	if err != nil {
-		jReq.responseChan <- &response{err: err}
-		return
-	}
-
-	// Read the raw bytes and close the response.
-	respBytes, err := ioutil.ReadAll(httpResponse.Body)
-	httpResponse.Body.Close()
-	if err != nil {
-		err = fmt.Errorf("error reading json reply: %v", err)
-		jReq.responseChan <- &response{err: err}
-		return
-	}
-
-	log.Debug("receive result data after posted", "result", string(respBytes))
-	// Try to unmarshal the response as a regular JSON-RPC response.
-	var resp rawResponse
-	err = json.Unmarshal(respBytes, &resp)
-	if err != nil {
-		// When the response itself isn't a valid JSON-RPC response
-		// return an error which includes the HTTP status code and raw
-		// response bytes.
-		err = fmt.Errorf("status code: %d, response: %q", httpResponse.StatusCode, string(respBytes))
-		jReq.responseChan <- &response{err: err}
-		return
-	}
-
-	res, err := resp.result()
-	jReq.responseChan <- &response{result: res, err: err}
-}
-
-
 /*
 Description:
 sendPostHandler handles all outgoing messages when the client is running
@@ -175,6 +120,44 @@ cleanup:
 	}
 	c.wg.Done()
 	log.Info("RPC client send task clean up", "host", c.config.Host)
+}
+
+// handleRequestDetail handles performing the passed HTTP request, reading the
+// result, unmarshalling it, and delivering the unmarshalled result to the
+// provided response channel.
+func (c *Client) handleRequestDetail(details *requestDetail) {
+	jReq := details.jsonRequest
+	log.Debug("Sending command", "command", jReq.method, "id", jReq.id)
+	httpResponse, err := c.httpClient.Do(details.httpRequest)
+	if err != nil {
+		jReq.responseChan <- &response{err: err}
+		return
+	}
+
+	// Read the raw bytes and close the response.
+	respBytes, err := ioutil.ReadAll(httpResponse.Body)
+	httpResponse.Body.Close()
+	if err != nil {
+		err = fmt.Errorf("error reading json reply: %v", err)
+		jReq.responseChan <- &response{err: err}
+		return
+	}
+
+	log.Debug("receive result data after posted", "result", string(respBytes))
+	// Try to unmarshal the response as a regular JSON-RPC response.
+	var resp rawResponse
+	err = json.Unmarshal(respBytes, &resp)
+	if err != nil {
+		// When the response itself isn't a valid JSON-RPC response
+		// return an error which includes the HTTP status code and raw
+		// response bytes.
+		err = fmt.Errorf("status code: %d, response: %q", httpResponse.StatusCode, string(respBytes))
+		jReq.responseChan <- &response{err: err}
+		return
+	}
+
+	res, err := resp.result()
+	jReq.responseChan <- &response{result: res, err: err}
 }
 
 /*
@@ -243,6 +226,21 @@ func (c *Client) sendRequest(jReq *jsonRequest) {
 	// the command is issued via the asynchronous websocket channels.
 	c.sendPost(jReq)
 	// ws ignore ...
+}
+
+/*
+Description:
+NextID returns the next id to be used when sending a JSON-RPC message.  This
+ID allows responses to be associated with particular requestsChan per the
+JSON-RPC specification.  Typically the consumer of the client does not need
+to call this function, however, if a custom request is being created and used
+this function should be used to ensure the ID is unique amongst all requestsChan
+being made.
+ * Author: architect.bian
+ * Date: 2018/08/26 14:30
+ */
+func (c *Client) NextID() uint64 {
+	return atomic.AddUint64(&c.id, 1)
 }
 
 /*

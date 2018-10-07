@@ -28,7 +28,6 @@ func IsValidIDType(id interface{}) bool {
 	}
 }
 
-
 /*
 Description:
 Request is a type for raw JSON-RPC 1.0 requests.  The Method field identifies
@@ -82,7 +81,6 @@ func NewRequest(id interface{}, method string, params []interface{}) (*Request, 
 		Params:  rawParams,
 	}, nil
 }
-
 
 /*
 Description:
@@ -153,7 +151,6 @@ func NewRPCError(code RPCErrorCode, message string) *RPCError {
 		Message: message,
 	}
 }
-
 
 /*
 Description:
