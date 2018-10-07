@@ -96,8 +96,8 @@ out:
 	for {
 		// Send any messages ready for send until the shutdown channel is closed.
 		select {
-		case detail := <-c.requestsChan:
-			c.handleRequestDetail(detail)
+		case req := <-c.requestsChan:
+			c.handleRequestDetail(req)
 
 		case <-c.shutdown:
 			break out
@@ -122,27 +122,30 @@ cleanup:
 	log.Info("RPC client send task clean up", "host", c.config.Host)
 }
 
-// handleRequestDetail handles performing the passed HTTP request, reading the
-// result, unmarshalling it, and delivering the unmarshalled result to the
-// provided response channel.
-func (c *Client) handleRequestDetail(details *requestDetail) {
-	jReq := details.jsonRequest
-	log.Debug("Sending command", "command", jReq.method, "id", jReq.id)
-	httpResponse, err := c.httpClient.Do(details.httpRequest)
+/*
+Description:
+handleRequestDetail handles performing the passed HTTP request, reading the
+result, unmarshalling it, and delivering the unmarshalled result to the
+provided response channel.
+ * Author: architect.bian
+ * Date: 2018/10/07 18:26
+ */
+func (c *Client) handleRequestDetail(request *requestDetail) {
+	jsonReq := request.jsonRequest
+	log.Debug("Sending command", "command", jsonReq.method, "id", jsonReq.id)
+	httpResponse, err := c.httpClient.Do(request.httpRequest)
 	if err != nil {
-		jReq.responseChan <- &response{err: err}
+		jsonReq.responseChan <- &response{err: err}
 		return
 	}
-
 	// Read the raw bytes and close the response.
 	respBytes, err := ioutil.ReadAll(httpResponse.Body)
 	httpResponse.Body.Close()
 	if err != nil {
 		err = fmt.Errorf("error reading json reply: %v", err)
-		jReq.responseChan <- &response{err: err}
+		jsonReq.responseChan <- &response{err: err}
 		return
 	}
-
 	log.Debug("receive result data after posted", "result", string(respBytes))
 	// Try to unmarshal the response as a regular JSON-RPC response.
 	var resp rawResponse
@@ -152,12 +155,11 @@ func (c *Client) handleRequestDetail(details *requestDetail) {
 		// return an error which includes the HTTP status code and raw
 		// response bytes.
 		err = fmt.Errorf("status code: %d, response: %q", httpResponse.StatusCode, string(respBytes))
-		jReq.responseChan <- &response{err: err}
+		jsonReq.responseChan <- &response{err: err}
 		return
 	}
-
 	res, err := resp.result()
-	jReq.responseChan <- &response{result: res, err: err}
+	jsonReq.responseChan <- &response{result: res, err: err}
 }
 
 /*
@@ -192,24 +194,24 @@ depending on several factors including the remote server configuration.
  * Author: architect.bian
  * Date: 2018/08/26 19:29
  */
-func (c *Client) sendPost(jReq *jsonRequest) {
+func (c *Client) sendPost(jsonReq *jsonRequest) {
 	// Generate a request to the configured RPC server.
 	protocol := "http"
 	if c.config.EnableTLS {
 		protocol = "https"
 	}
 	url := protocol + "://" + c.config.Host
-	bodyReader := bytes.NewReader(jReq.marshalledJSON)
+	bodyReader := bytes.NewReader(jsonReq.marshalledJSON)
 	request, err := http.NewRequest("POST", url, bodyReader)
 	if err != nil {
-		jReq.responseChan <- &response{result: nil, err: err}
+		jsonReq.responseChan <- &response{result: nil, err: err}
 		return
 	}
 	request.Close = true
 	request.Header.Set("Content-Type", "application/json")
 	// Configure basic access authorization.
 	request.SetBasicAuth(c.config.User, c.config.Pass)
-	c.sendPostRequest(request, jReq)
+	c.sendPostRequest(request, jsonReq)
 }
 
 /*

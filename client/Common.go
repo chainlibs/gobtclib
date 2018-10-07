@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 )
 
-
 /*
 Description:
 requestDetail houses an HTTP POST request to send to an RPC server as well
@@ -56,7 +55,7 @@ to be valid (according to JSON-RPC 1.0 spec), ID may not be nil.
  */
 type rawResponse struct {
 	Result json.RawMessage   `json:"result"`
-	Error  *Error `json:"error"`
+	Error  *Error 			 `json:"error"`
 }
 
 /*
