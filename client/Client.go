@@ -185,17 +185,17 @@ so it will not block until the send channel is full.
  * Author: architect.bian
  * Date: 2018/08/26 19:29
  */
-func (c *Client) sendPostRequest(httpReq *http.Request, jReq *jsonRequest) {
-	// Don't send the message if shutting down.
+func (c *Client) sendPostRequest(req *http.Request, jsonReq *jsonRequest) {
+	// Don't send the request if shutting down.
 	select {
 	case <-c.shutdown:
-		jReq.responseChan <- &response{result: nil, err: ErrClientShutdown}
+		jsonReq.responseChan <- &response{result: nil, err: ErrClientShutdown}
 	default:
 	}
 
 	c.requestsChan <- &requestDetail{
-		jsonRequest: jReq,
-		httpRequest: httpReq,
+		jsonRequest: jsonReq,
+		httpRequest: req,
 	}
 }
 
@@ -211,24 +211,22 @@ depending on several factors including the remote server configuration.
  */
 func (c *Client) sendPost(jReq *jsonRequest) {
 	// Generate a request to the configured RPC server.
-		protocol := "http"
+	protocol := "http"
 	if c.config.EnableTLS {
 		protocol = "https"
 	}
 	url := protocol + "://" + c.config.Host
 	bodyReader := bytes.NewReader(jReq.marshalledJSON)
-	httpRequest, err := http.NewRequest("POST", url, bodyReader)
+	request, err := http.NewRequest("POST", url, bodyReader)
 	if err != nil {
 		jReq.responseChan <- &response{result: nil, err: err}
 		return
 	}
-	httpRequest.Close = true
-	httpRequest.Header.Set("Content-Type", "application/json")
-
+	request.Close = true
+	request.Header.Set("Content-Type", "application/json")
 	// Configure basic access authorization.
-	httpRequest.SetBasicAuth(c.config.User, c.config.Pass)
-
-	c.sendPostRequest(httpRequest, jReq)
+	request.SetBasicAuth(c.config.User, c.config.Pass)
+	c.sendPostRequest(request, jReq)
 }
 
 /*
@@ -259,7 +257,7 @@ configuration of the client.
 func (c *Client) sendCmd(cmd *Command) chan *response {
 	// Marshal the command.
 	id := c.NextID()
-	marshalledJSON, err := MarshalCmd2(id, cmd)
+	marshalledJSON, err := MarshalCmd(id, cmd)
 	if err != nil {
 		return newFutureError(err)
 	}
