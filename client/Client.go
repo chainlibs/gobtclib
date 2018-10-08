@@ -80,26 +80,26 @@ start begins processing input and output messages.
 func (c *Client) Startup() *Client {
 	log.Info("Starting RPC client", "Host", c.config.Host)
 	c.wg.Add(1)
-	go c.sendPostHandler()
+	go c.handleRequests()
 	return c
 }
 
 /*
 Description:
-sendPostHandler handles all outgoing messages when the client is running
+handleRequests handles all outgoing messages when the client is running
 in HTTP POST mode.  It uses a buffered channel to serialize output messages
 while allowing the sender to continue running asynchronously.  It must be run
 as a goroutine.
  * Author: architect.bian
  * Date: 2018/08/26 16:05
  */
-func (c *Client) sendPostHandler() {
+func (c *Client) handleRequests() {
 out:
 	for {
 		// Send any messages ready for send until the shutdown channel is closed.
 		select {
 		case req := <-c.requestsChan:
-			c.handleRequestDetail(req)
+			c.doRequest(req)
 
 		case <-c.shutdown:
 			break out
@@ -111,8 +111,8 @@ out:
 cleanup:
 	for {
 		select {
-		case detail := <-c.requestsChan:
-			detail.JsonRequest.ResponseChan <- &base.Response{
+		case req := <-c.requestsChan:
+			req.Detail.ResponseChan <- &base.Response{
 				Result: nil,
 				Err:    base.ErrClientShutdown,
 			}
@@ -132,63 +132,63 @@ provided response channel.
  * Author: architect.bian
  * Date: 2018/10/07 18:26
  */
-func (c *Client) handleRequestDetail(request *base.RequestDetail) {
-	jsonReq := request.JsonRequest
-	log.Debug("Sending command", "command", jsonReq.Method, "id", jsonReq.Id)
-	httpResponse, err := c.httpClient.Do(request.HttpRequest)
+func (c *Client) doRequest(requestDetail *base.RequestDetail) {
+	detail := requestDetail.Detail
+	log.Debug("Sending command", "command", detail.Method, "id", detail.Id)
+	response, err := c.httpClient.Do(requestDetail.HttpRequest)
 	if err != nil {
-		jsonReq.ResponseChan <- &base.Response{Err: err}
+		detail.ResponseChan <- &base.Response{Err: err}
 		return
 	}
 	// Read the raw bytes and close the response.
-	respBytes, err := ioutil.ReadAll(httpResponse.Body)
-	httpResponse.Body.Close()
+	bodyBytes, err := ioutil.ReadAll(response.Body)
+	response.Body.Close()
 	if err != nil {
 		err = fmt.Errorf("error reading json reply: %v", err)
-		jsonReq.ResponseChan <- &base.Response{Err: err}
+		detail.ResponseChan <- &base.Response{Err: err}
 		return
 	}
-	log.Debug("receive result data after posted", "result", string(respBytes))
+	log.Debug("receive result data after posted", "result", string(bodyBytes))
 	// Try to unmarshal the response as a regular JSON-RPC response.
-	var resp base.RawResponse
-	err = json.Unmarshal(respBytes, &resp)
+	var respRaw base.RespRaw
+	err = json.Unmarshal(bodyBytes, &respRaw)
 	if err != nil {
 		// When the response itself isn't a valid JSON-RPC response
 		// return an error which includes the HTTP status code and raw
 		// response bytes.
-		err = fmt.Errorf("status code: %d, response: %q", httpResponse.StatusCode, string(respBytes))
-		jsonReq.ResponseChan <- &base.Response{Err: err}
+		err = fmt.Errorf("status code: %d, response: %q", response.StatusCode, string(bodyBytes))
+		detail.ResponseChan <- &base.Response{Err: err}
 		return
 	}
-	res, err := resp.GetResult()
-	jsonReq.ResponseChan <- &base.Response{Result: res, Err: err}
+	respBytes, err := respRaw.GetRaw()
+	detail.ResponseChan <- &base.Response{Result: respBytes, Err: err}
 }
 
 /*
 Description:
-sendPostRequest sends the passed HTTP request to the RPC server using the
+sendRequest sends the passed HTTP request to the RPC server using the
 HTTP client associated with the client.  It is backed by a buffered channel,
 so it will not block until the send channel is full.
  * Author: architect.bian
  * Date: 2018/08/26 19:29
  */
-func (c *Client) sendPostRequest(req *http.Request, jsonReq *base.JsonRequest) {
+func (c *Client) sendRequest(req *http.Request, detail *base.JsonDetail) {
 	// Don't send the request if shutting down.
 	select {
 	case <-c.shutdown:
-		jsonReq.ResponseChan <- &base.Response{Result: nil, Err: base.ErrClientShutdown}
+		detail.ResponseChan <- &base.Response{Result: nil, Err: base.ErrClientShutdown}
 	default:
 	}
 
 	c.requestsChan <- &base.RequestDetail{
-		JsonRequest: jsonReq,
 		HttpRequest: req,
+		Detail:      detail,
 	}
 }
 
 /*
 Description:
-sendPost sends the passed request to the server by issuing an HTTP POST
+sendDetail sends the passed request to the server by issuing an HTTP POST
 request using the provided response channel for the reply.  Typically a new
 connection is opened and closed for each command when using this method,
 however, the underlying HTTP client might coalesce multiple commands
@@ -196,40 +196,24 @@ depending on several factors including the remote server configuration.
  * Author: architect.bian
  * Date: 2018/08/26 19:29
  */
-func (c *Client) sendPost(jsonReq *base.JsonRequest) {
+func (c *Client) sendDetail(detail *base.JsonDetail) {
 	// Generate a request to the configured RPC server.
 	protocol := "http"
 	if c.config.EnableTLS {
 		protocol = "https"
 	}
 	url := protocol + "://" + c.config.Host
-	bodyReader := bytes.NewReader(jsonReq.MarshalledJSON)
+	bodyReader := bytes.NewReader(detail.MarshalledJSON)
 	request, err := http.NewRequest("POST", url, bodyReader)
 	if err != nil {
-		jsonReq.ResponseChan <- &base.Response{Result: nil, Err: err}
+		detail.ResponseChan <- &base.Response{Result: nil, Err: err}
 		return
 	}
 	request.Close = true
 	request.Header.Set("Content-Type", "application/json")
 	// Configure basic access authorization.
 	request.SetBasicAuth(c.config.User, c.config.Pass)
-	c.sendPostRequest(request, jsonReq)
-}
-
-/*
-Description:
-sendRequest sends the passed json request to the associated server using the
-provided response channel for the reply.
- * Author: architect.bian
- * Date: 2018/08/26 19:19
- */
-func (c *Client) sendRequest(jReq *base.JsonRequest) {
-	// Choose which marshal and send function to use depending on whether
-	// the client running in HTTP POST mode or not.  When running in HTTP
-	// POST mode, the command is issued via an HTTP client.  Otherwise,
-	// the command is issued via the asynchronous websocket channels.
-	c.sendPost(jReq)
-	// ws ignore ...
+	c.sendRequest(request, detail)
 }
 
 /*
@@ -259,21 +243,21 @@ configuration of the client.
 func (c *Client) sendCmd(cmd *Command) chan *base.Response {
 	// Marshal the command.
 	id := c.NextID()
-	marshalledJSON, err := MarshalCmd(id, cmd)
+	marshalledJSON, err := MarshalCmdToJRPC(id, cmd)
 	if err != nil {
 		return futures.NewFutureError(err)
 	}
 	log.Debug("posting json content", "json", string(marshalledJSON))
 	// Generate the request and send it along with a channel to respond on.
 	responseChan := make(chan *base.Response, 1)
-	jReq := &base.JsonRequest{
+	detail := &base.JsonDetail{
 		Id:             id,
 		Method:         cmd.name,
 		Cmd:            cmd,
 		MarshalledJSON: marshalledJSON,
 		ResponseChan:   responseChan,
 	}
-	c.sendRequest(jReq)
+	c.sendDetail(detail)
 
 	return responseChan
 }

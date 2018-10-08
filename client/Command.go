@@ -23,14 +23,14 @@ func NewCommand(name string, args ...interface{}) *Command {
 
 /*
 Description:
-MarshalCmd marshals the passed command to a JSON-RPC request byte slice that
+MarshalCmdToJRPC marshals the passed command to a JSON-RPC request byte slice that
 is suitable for transmission to an RPC server.  The provided command type
 must be a registered type.  All commands provided by this package are
 registered by default.
  * Author: architect.bian
  * Date: 2018/08/26 19:14
  */
-func MarshalCmd(id uint64, cmd *Command) ([]byte, error) {
+func MarshalCmdToJRPC(id uint64, cmd *Command) ([]byte, error) {
 	// Generate and marshal the final JSON-RPC request.
 	jsonRPC, err := base.NewJRPC(id, cmd.name, cmd.args)
 	if err != nil {
