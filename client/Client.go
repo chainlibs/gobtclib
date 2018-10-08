@@ -114,7 +114,7 @@ cleanup:
 		case req := <-c.requestsChan:
 			req.Detail.ResponseChan <- &base.Response{
 				Result: nil,
-				Err:    base.ErrClientShutdown,
+				Err:    ErrClientShutdown,
 			}
 		default:
 			break cleanup
@@ -176,7 +176,7 @@ func (c *Client) sendRequest(req *http.Request, detail *base.JsonDetail) {
 	// Don't send the request if shutting down.
 	select {
 	case <-c.shutdown:
-		detail.ResponseChan <- &base.Response{Result: nil, Err: base.ErrClientShutdown}
+		detail.ResponseChan <- &base.Response{Result: nil, Err: ErrClientShutdown}
 	default:
 	}
 

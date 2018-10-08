@@ -61,7 +61,7 @@ function with that command to generate the marshalled JSON-RPC request.
  */
 func NewJRPC(id interface{}, method string, params []interface{}) (*JRPC, error) {
 	if !IsValidIDType(id) {
-		return nil, NewError(ErrInvalidType, fmt.Sprintf("the id of type '%T' is invalid", id))
+		return nil, NewError(ErrInvalidTypeCode, fmt.Sprintf("the id of type '%T' is invalid", id))
 	}
 
 	rawParams := make([]json.RawMessage, 0, len(params))
