@@ -2,8 +2,12 @@
 
 A client library with golang for Bitcoin
 
+[![gobtclib Version](https://img.shields.io/badge/gobtclib-V0.1.0-brightgreen.svg)](https://github.com/chainlibs/gobtclib/releases)
 [![Build Status](https://travis-ci.org/chainlibs/gobtclib.svg?branch=master)](https://travis-ci.org/chainlibs/gobtclib)
 [![Gitter chat](https://badges.gitter.im/owner/repo.png)](https://gitter.im/gobtclib/Lobby)
+[![GitHub issues](https://img.shields.io/github/issues/chainlibs/gobtclib.svg)](https://github.com/chainlibs/gobtclib/issues)
+[![GitHub stars](https://img.shields.io/github/stars/chainlibs/gobtclib.svg)](https://github.com/chainlibs/gobtclib/stargazers)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/chainlibs/gobtclib/master/LICENSE)
 
 What is Bitcoin?
 ----------------
@@ -16,6 +20,38 @@ software which enables the use of this currency.
 
 The current project is the client library for bitcoin, you can read the document from
 https://bitcoincore.org/en/doc for more information.
+
+Support rpc list
+----------------
+
+- BLOCKCHAIN
+    - GetBlockCount
+    - GetBestBlockHash
+    - GetDifficulty
+    - GetBlockHash
+    - GetBlockHeaderVerbose
+    - GetBlockChainInfo
+    - GetBlockVerbose
+    - GetBlockVerboseTx
+    - VerifyChain
+    - VerifyChainLevel
+    - VerifyChainBlocks
+    - GetRawMempool
+    - GetRawMempoolVerbose
+    - GetMempoolEntry
+    - GetTxOut
+- CONTROL
+- GENERATING
+- MINING
+- NETWORK
+- RAWTRANSACTIONS
+- UTIL
+- WALLET
+
+How to use
+----------
+
+Take example from (examples/main.go)
 
 Development Process
 -------------------
