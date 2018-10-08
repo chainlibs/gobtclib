@@ -32,7 +32,7 @@ registered by default.
  */
 func MarshalCmd(id uint64, cmd *Command) ([]byte, error) {
 	// Generate and marshal the final JSON-RPC request.
-	jsonRPC, err := base.NewRequest(id, cmd.name, cmd.args)
+	jsonRPC, err := base.NewJRPC(id, cmd.name, cmd.args)
 	if err != nil {
 		return nil, err
 	}

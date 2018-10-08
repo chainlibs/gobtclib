@@ -1,8 +1,8 @@
 package base
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
 )
 
 /*
@@ -30,7 +30,7 @@ func IsValidIDType(id interface{}) bool {
 
 /*
 Description:
-JRequest is a type for raw JSON-RPC 1.0 requests.  The Method field identifies
+JRPC is a type for raw JSON-RPC 1.0 requests.  The Method field identifies
 the specific command type which in turns leads to different parameters.
 Callers typically will not use this directly since this package provides a
 statically typed command infrastructure which handles creation of these
@@ -39,7 +39,7 @@ construct raw requests for some reason.
  * Author: architect.bian
  * Date: 2018/08/26 17:27
  */
-type JRequest struct {//TODO? ? JRPC?
+type JRPC struct {
 	Jsonrpc string            `json:"jsonrpc"`
 	Method  string            `json:"method"`
 	Params  []json.RawMessage `json:"params"`
@@ -48,7 +48,7 @@ type JRequest struct {//TODO? ? JRPC?
 
 /*
 Description:
-NewRequest returns a new JSON-RPC 1.0 request object given the provided id,
+NewJRPC returns a new JSON-RPC 1.0 request object given the provided id,
 method, and parameters.  The parameters are marshalled into a json.RawMessage
 for the Params field of the returned request object.  This function is only
 provided in case the caller wants to construct raw requests for some reason.
@@ -59,9 +59,9 @@ function with that command to generate the marshalled JSON-RPC request.
  * Author: architect.bian
  * Date: 2018/08/26 17:29
  */
-func NewRequest(id interface{}, method string, params []interface{}) (*JRequest, error) { //TODO NewJRequest NewJRPC?
+func NewJRPC(id interface{}, method string, params []interface{}) (*JRPC, error) {
 	if !IsValidIDType(id) {
-		return nil, makeInvalidIDError(ErrInvalidType, id)
+		return nil, NewError(ErrInvalidType, fmt.Sprintf("the id of type '%T' is invalid", id))
 	}
 
 	rawParams := make([]json.RawMessage, 0, len(params))
@@ -74,7 +74,7 @@ func NewRequest(id interface{}, method string, params []interface{}) (*JRequest,
 		rawParams = append(rawParams, rawMessage)
 	}
 
-	return &JRequest{
+	return &JRPC{
 		Jsonrpc: "1.0",
 		ID:      id,
 		Method:  method,
@@ -82,108 +82,108 @@ func NewRequest(id interface{}, method string, params []interface{}) (*JRequest,
 	}, nil
 }
 
-/*
-Description:
-JResponse is the general form of a JSON-RPC response.  The type of the Result
-field varies from one command to the next, so it is implemented as an
-interface.  The ID field has to be a pointer for Go to put a null in it when empty.
- * Author: architect.bian
- * Date: 2018/08/26 17:35
- */
-type JResponse struct {//TODO ?
-	Result json.RawMessage `json:"result"`
-	Error  *RPCError       `json:"error"`
-	ID     *interface{}    `json:"id"`
-}
+///*
+//Description:
+//JRPCResponse is the general form of a JSON-RPC response.  The type of the Result
+//field varies from one command to the next, so it is implemented as an
+//interface.  The ID field has to be a pointer for Go to put a null in it when empty.
+// * Author: architect.bian
+// * Date: 2018/08/26 17:35
+// */
+//type JRPCResponse struct {
+//	Result json.RawMessage `json:"result"`
+//	Error  *RPCError       `json:"error"`
+//	ID     *interface{}    `json:"id"`
+//}
 
-/*
-Description:
-NewResponse returns a new JSON-RPC response object given the provided id,marshalled result, and RPC error.
-This function is only provided in case the caller wants to construct raw responses for some reason.
+///*
+//Description:
+//NewJRPCResponse returns a new JSON-RPC response object given the provided id,marshalled result, and RPC error.
+//This function is only provided in case the caller wants to construct raw responses for some reason.
+//
+//Typically callers will instead want to create the fully marshalled JSON-RPC
+//response to send over the wire with the MarshalJRPCResponse function.
+// * Author: architect.bian
+// * Date: 2018/08/26 17:36
+// */
+//func NewJRPCResponse(id interface{}, marshalledResult []byte, rpcErr *RPCError) (*JRPCResponse, error) {
+//	if !IsValidIDType(id) {
+//		return nil, makeInvalidIDError(ErrInvalidType, id)
+//	}
+//
+//	pid := &id
+//	return &JRPCResponse{
+//		Result: marshalledResult,
+//		Error:  rpcErr,
+//		ID:     pid,
+//	}, nil
+//}
+//
+///*
+//Description:
+//MarshalJRPCResponse marshals the passed id, result, and RPCError to a JSON-RPC
+//response byte slice that is suitable for transmission to a JSON-RPC client.
+// * Author: architect.bian
+// * Date: 2018/08/26 17:44
+// */
+//func MarshalJRPCResponse(id interface{}, result interface{}, rpcErr *RPCError) ([]byte, error) {
+//	marshalledResult, err := json.Marshal(result)
+//	if err != nil {
+//		return nil, err
+//	}
+//	response, err := NewJRPCResponse(id, marshalledResult, rpcErr)
+//	if err != nil {
+//		return nil, err
+//	}
+//	return json.Marshal(&response)
+//}
 
-Typically callers will instead want to create the fully marshalled JSON-RPC
-response to send over the wire with the MarshalResponse function.
- * Author: architect.bian
- * Date: 2018/08/26 17:36
- */
-func NewResponse(id interface{}, marshalledResult []byte, rpcErr *RPCError) (*JResponse, error) {
-	if !IsValidIDType(id) {
-		return nil, makeInvalidIDError(ErrInvalidType, id)
-	}
+///*
+//Description:
+//NewRPCError constructs and returns a new JSON-RPC error that is suitable
+//for use in a JSON-RPC JRPCResponse object.
+// * Author: architect.bian
+// * Date: 2018/08/26 17:46
+// */
+//func NewRPCError(code RPCErrorCode, message string) *RPCError {
+//	return &RPCError{
+//		Code:    code,
+//		Message: message,
+//	}
+//}
 
-	pid := &id
-	return &JResponse{
-		Result: marshalledResult,
-		Error:  rpcErr,
-		ID:     pid,
-	}, nil
-}
-
-/*
-Description:
-MarshalResponse marshals the passed id, result, and RPCError to a JSON-RPC
-response byte slice that is suitable for transmission to a JSON-RPC client.
- * Author: architect.bian
- * Date: 2018/08/26 17:44
- */
-func MarshalResponse(id interface{}, result interface{}, rpcErr *RPCError) ([]byte, error) {
-	marshalledResult, err := json.Marshal(result)
-	if err != nil {
-		return nil, err
-	}
-	response, err := NewResponse(id, marshalledResult, rpcErr)
-	if err != nil {
-		return nil, err
-	}
-	return json.Marshal(&response)
-}
-
-/*
-Description:
-NewRPCError constructs and returns a new JSON-RPC error that is suitable
-for use in a JSON-RPC JResponse object.
- * Author: architect.bian
- * Date: 2018/08/26 17:46
- */
-func NewRPCError(code RPCErrorCode, message string) *RPCError {
-	return &RPCError{
-		Code:    code,
-		Message: message,
-	}
-}
-
-/*
-Description:
-RPCErrorCode represents an error code to be used as a part of an RPCError
-which is in turn used in a JSON-RPC JResponse object.
-
-A specific type is used to help ensure the wrong errors aren't used.
- * Author: architect.bian
- * Date: 2018/08/26 17:46
- */
-type RPCErrorCode int
-
-/*
-Description:
-RPCError represents an error that is used as a part of a JSON-RPC JResponse object.
- * Author: architect.bian
- * Date: 2018/08/26 17:16
- */
-type RPCError struct {
-	Code    RPCErrorCode `json:"code,omitempty"`
-	Message string       `json:"message,omitempty"`
-}
-
-/*
-Description:
-Error returns a string describing the RPC error.  This satisifies the
-builtin error interface.
- * Author: architect.bian
- * Date: 2018/08/26 17:19
- */
-func (e RPCError) Error() string {
-	return fmt.Sprintf("%d: %s", e.Code, e.Message)
-}
-
-// Guarantee RPCError satisifies the builtin error interface.
-var _, _ error = RPCError{}, (*RPCError)(nil)
+///*
+//Description:
+//RPCErrorCode represents an error code to be used as a part of an RPCError
+//which is in turn used in a JSON-RPC JRPCResponse object.
+//
+//A specific type is used to help ensure the wrong errors aren't used.
+// * Author: architect.bian
+// * Date: 2018/08/26 17:46
+// */
+//type RPCErrorCode int
+//
+///*
+//Description:
+//RPCError represents an error that is used as a part of a JSON-RPC JRPCResponse object.
+// * Author: architect.bian
+// * Date: 2018/08/26 17:16
+// */
+//type RPCError struct {
+//	Code    RPCErrorCode `json:"code,omitempty"`
+//	Message string       `json:"message,omitempty"`
+//}
+//
+///*
+//Description:
+//Error returns a string describing the RPC error.  This satisifies the
+//builtin error interface.
+// * Author: architect.bian
+// * Date: 2018/08/26 17:19
+// */
+//func (e RPCError) Error() string {
+//	return fmt.Sprintf("%d: %s", e.Code, e.Message)
+//}
+//
+//// Guarantee RPCError satisifies the builtin error interface.
+//var _, _ error = RPCError{}, (*RPCError)(nil)
