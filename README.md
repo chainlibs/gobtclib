@@ -2,7 +2,8 @@
 
 A client library with golang for Bitcoin
 
-[![gobtclib Version](https://img.shields.io/badge/gobtclib-V0.1.0-brightgreen.svg)](https://github.com/chainlibs/gobtclib/releases)
+![GitHub release](https://img.shields.io/github/release/chainlibs/gobtclib.svg)
+![Github commits (since latest release)](https://img.shields.io/github/commits-since/chainlibs/gobtclib/latest.svg)
 [![Build Status](https://travis-ci.org/chainlibs/gobtclib.svg?branch=master)](https://travis-ci.org/chainlibs/gobtclib)
 [![GitHub issues](https://img.shields.io/github/issues/chainlibs/gobtclib.svg)](https://github.com/chainlibs/gobtclib/issues)
 [![GitHub stars](https://img.shields.io/github/stars/chainlibs/gobtclib.svg)](https://github.com/chainlibs/gobtclib/stargazers)
