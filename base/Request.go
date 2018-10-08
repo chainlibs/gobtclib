@@ -6,7 +6,7 @@ import (
 
 /*
 Description:
-requestDetail houses an HTTP POST request to send to an RPC server as well
+RequestDetail houses an HTTP POST request to send to an RPC server as well
 as the original JSON-RPC command and a channel to reply on when the server
 responds with the result.
  * Author: architect.bian

@@ -28,6 +28,14 @@ func NewErrorF(c ErrorCode, format string, a ...interface{}) Error {
 
 /*
 Description:
+Guarantee RPCError satisifies the builtin error interface.
+ * Author: architect.bian
+ * Date: 2018/10/08 12:22
+ */
+var _, _ error = Error{}, (*Error)(nil)
+
+/*
+Description:
 RPCError represents an error that is used as a part of a JSON-RPC JRPCResponse object.
  * Author: architect.bian
  * Date: 2018/10/08 12:21
@@ -36,14 +44,6 @@ type Error struct {
 	Code    ErrorCode	 `json:"code,omitempty"`
 	Message string       `json:"message,omitempty"`
 }
-
-/*
-Description:
-Guarantee RPCError satisifies the builtin error interface.
- * Author: architect.bian
- * Date: 2018/10/08 12:22
- */
-var _, _ error = Error{}, (*Error)(nil)
 
 /*
 Description:

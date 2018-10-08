@@ -11,7 +11,6 @@ A specific type is used to help ensure the wrong errors aren't used.
  */
 type ErrorCode int
 
-// These constants are used to identify a specific RuleError.
 const (
 
 	// ErrInvalidType indicates a type was passed that is not the required type.
