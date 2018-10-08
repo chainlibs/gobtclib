@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 .PHONY : all
-all : clean deps build deploy
+all : clean deps deploy
 
 .PHONY: deps
 deps :

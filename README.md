@@ -14,8 +14,8 @@ with no central authority: managing transactions and issuing money are carried
 out collectively by the network. Bitcoin Core is the name of open source
 software which enables the use of this currency.
 
-For more information, the current project is the client library for bitcoin, you can read the document from
-https://bitcoincore.org/en/doc.
+The current project is the client library for bitcoin, you can read the document from
+https://bitcoincore.org/en/doc for more information.
 
 Development Process
 -------------------
@@ -52,5 +52,5 @@ not straightforward.
 License
 -------
 
-Bitcoin Core is released under the terms of the MIT license. See [COPYING](COPYING) for more
+Chainlibs/gobtclib is released under the terms of the MIT license. See [COPYING](COPYING) for more
 information or see https://opensource.org/licenses/MIT.
