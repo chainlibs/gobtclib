@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 .PHONY : all
-all : clean deps deploy
+all : clean deps build deploy
 
 .PHONY: deps
 deps :
@@ -9,7 +9,7 @@ deps :
 
 .PHONY: build
 build :
-	go build -o bbb main.go
+	go build -o demo examples/main.go
 
 .PHONY: clean
 clean :
