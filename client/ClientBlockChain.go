@@ -3,7 +3,7 @@ package client
 import (
 	"github.com/chainlibs/gobtclib/results"
 	"github.com/chainlibs/gobtclib/futures"
-	"exchain.com/chainlibs/btc/utils"
+	"github.com/chainlibs/gobtclib/utils"
 )
 
 /*
