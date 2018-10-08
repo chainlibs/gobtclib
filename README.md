@@ -4,6 +4,7 @@ A client library with golang for Bitcoin
 
 [![Build Status](https://travis-ci.org/chainlibs/gobtclib.svg?branch=master)](https://travis-ci.org/chainlibs/gobtclib)
 [![Gitter chat](https://badges.gitter.im/owner/repo.png)](https://gitter.im/gobtclib/Lobby)
+
 What is Bitcoin?
 ----------------
 
@@ -13,9 +14,8 @@ with no central authority: managing transactions and issuing money are carried
 out collectively by the network. Bitcoin Core is the name of open source
 software which enables the use of this currency.
 
-For more information, as well as an immediately useable, binary version of
-the Bitcoin Core software, see https://bitcoincore.org/en/download/, or read the
-[original whitepaper](https://bitcoincore.org/bitcoin.pdf).
+For more information, the current project is the client library for bitcoin, you can read the document from
+https://bitcoincore.org/en/doc.
 
 Development Process
 -------------------
