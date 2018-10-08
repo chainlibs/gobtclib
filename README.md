@@ -51,7 +51,7 @@ Support RPC list
 Usage
 -----
 
-Take example from (examples/main.go)
+Take example from /examples/main.go
 
 Development Process
 -------------------
