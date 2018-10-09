@@ -22,6 +22,12 @@ software which enables the use of this currency.
 The current project is the client library for bitcoin, you can read the document from
 https://bitcoincore.org/en/doc for more information.
 
+What is gobtclib?
+----------------
+
+gobtclib is a golang-based library for working with the Bitcoin protocol. It can maintain a wallet, send/receive transactions without
+needing a local copy of Bitcoin Core and has many other advanced features.
+
 Support RPC list
 ----------------
 
