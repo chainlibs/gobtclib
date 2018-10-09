@@ -9,7 +9,7 @@ hex-encoded string.
  * Date: 2018/09/17 16:27
  */
 type GetBlockVerboseTXResult struct {
-	GetBlockVerboseResult
+	GetBlockResult
 	Tx []TxRawResult 			`json:"tx"`
 }
 

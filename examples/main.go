@@ -29,14 +29,16 @@ func main() {
 	}
 	demos.Initialize(cfg)
 	defer demos.Shutdown()
-	demos.GetBlockCountTest()
 	//demos.GetBestBlockHashTest()
+	//demos.GetBlockBytesTest()
+	//demos.GetBlockTest()
+	demos.GetBlockVerboseTXTest()
+	//demos.GetBlockCountTest()
 	//demos.GetDifficultyTest()
 	//demos.GetBlockHashTest()
 	//demos.GetBlockHeaderTest() //TODO failed
 	//demos.GetBlockHeaderVerboseTest()
 	//demos.GetBlockChainInfoTest()
-	//demos.GetBlockTest() // TODO failed
 	//demos.GetBlockVerboseTest()
 	//demos.GetBlockVerboseTxTest()
 	//demos.RescanBlocksTest() //TODO failed

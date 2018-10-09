@@ -58,7 +58,8 @@ Support RPC list
 Usage
 -----
 
-Take example from [examples/main.go](/examples/main.go)
+1 download dependency library: go get -u go.uber.org/zap;go get -u github.com/gobasis/log;
+1 Take example from [examples/main.go](/examples/main.go)
 
 Development Process
 -------------------

@@ -20,7 +20,7 @@ data structure requested from the server given its hash.
  * Author: architect.bian
  * Date: 2018/08/26 18:56
  */
-func (r FutureResult) Receive(result interface{}) (*interface{}, error) {
+func (r FutureResult) Receive(result *interface{}) (*interface{}, error) {
 	res, err := ReceiveFuture(r)
 	if err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func (r FutureResult) Receive(result interface{}) (*interface{}, error) {
 		return nil, err
 	}
 
-	return &result, nil
+	return result, nil
 }
 
 /*
@@ -44,7 +44,7 @@ until the result is available on the passed channel.
  * Author: architect.bian
  * Date: 2018/09/14 12:56
  */
-func ReceiveFuture(f chan *base.Response) ([]byte, error) { //TODO futerReceive?!
+func ReceiveFuture(f chan *base.Response) ([]byte, error) {
 	// Wait for a response on the returned channel.
 	r := <-f
 	return r.Result, r.Err

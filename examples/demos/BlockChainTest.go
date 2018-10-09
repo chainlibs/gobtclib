@@ -123,6 +123,27 @@ a demo test of GetBlock, Get the special block data structure.
  * Author: architect.bian
  * Date: 2018/09/14 13:13
  */
+func GetBlockBytesTest() {
+	hash, err := cli.GetBlockHash(1)
+	if err != nil {
+		log.Fatal("", "error", err)
+	}
+	log.Info("GetBlockHash", "hash", hash)
+	//hash, _ := client.NewHashFromStr("353eb168c70770b281f634fd0d22fbaee94b3fed1d76276e91165444e876f658")
+	block, err := cli.GetBlockBytes(hash)
+	if err != nil {
+		log.Error("", "error", err)
+		panic(err)
+	}
+	log.Info("GetBlockBytes", "block", string(*block))
+}
+
+/*
+Description:
+a demo test of GetBlock, Get the special block data structure.
+ * Author: architect.bian
+ * Date: 2018/09/14 13:13
+ */
 func GetBlockTest() {
 	hash, err := cli.GetBlockHash(1)
 	if err != nil {
@@ -144,41 +165,41 @@ a demo test of GetBlockVerbose, Get the special block data structure.
  * Author: architect.bian
  * Date: 2018/09/14 13:13
  */
-func GetBlockVerboseTest() {
-	hash, err := cli.GetBlockHash(100)
+func GetBlockVerboseTXTest() {
+	hash, err := cli.GetBlockHash(1)
 	if err != nil {
 		log.Fatal("", "error", err)
 	}
 	log.Info("GetBlockHash", "hash", hash)
 	//hash, _ := client.NewHashFromStr("353eb168c70770b281f634fd0d22fbaee94b3fed1d76276e91165444e876f658")
-	block, err := cli.GetBlockVerbose(hash)
+	block, err := cli.GetBlockVerboseTX(hash)
 	if err != nil {
 		log.Error("", "error", err)
 		panic(err)
 	}
-	log.Info("GetBlockVerbose", "block", block)
+	log.Info("GetBlockVerboseTX", "block", block)
 }
 
-/*
-Description:
-a demo test of GetBlockVerboseTx, Get the special block data structure.
- * Author: architect.bian
- * Date: 2018/09/14 13:13
- */
-func GetBlockVerboseTxTest() {
-	hash, err := cli.GetBlockHash(100)
-	if err != nil {
-		log.Fatal("", "error", err)
-	}
-	log.Info("GetBlockHash", "hash", hash)
-	//hash, _ := client.NewHashFromStr("353eb168c70770b281f634fd0d22fbaee94b3fed1d76276e91165444e876f658")
-	block, err := cli.GetBlockVerboseTx(hash)
-	if err != nil {
-		log.Error("", "error", err)
-		panic(err)
-	}
-	log.Info("GetBlockVerboseTx", "block", block)
-}
+///*
+//Description:
+//a demo test of GetBlockVerboseTx, Get the special block data structure.
+// * Author: architect.bian
+// * Date: 2018/09/14 13:13
+// */
+//func GetBlockVerboseTxTest() {
+//	hash, err := cli.GetBlockHash(100)
+//	if err != nil {
+//		log.Fatal("", "error", err)
+//	}
+//	log.Info("GetBlockHash", "hash", hash)
+//	//hash, _ := client.NewHashFromStr("353eb168c70770b281f634fd0d22fbaee94b3fed1d76276e91165444e876f658")
+//	block, err := cli.GetBlockVerboseTx(hash)
+//	if err != nil {
+//		log.Error("", "error", err)
+//		panic(err)
+//	}
+//	log.Info("GetBlockVerboseTx", "block", block)
+//}
 
 ///*
 //Description:

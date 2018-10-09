@@ -2,13 +2,13 @@ package results
 
 /*
 Description:
-GetBlockVerboseResult models the data from the getblock command when the
+GetBlockResult models the data from the getblock command when the
 verbose flag is 0/1.  When the verbose flag is set as 0, getblock returns a
 hex-encoded string.
  * Author: architect.bian
  * Date: 2018/09/17 16:27
  */
-type GetBlockVerboseResult struct {
+type GetBlockResult struct {
 	Hash          string        `json:"hash"`
 	Confirmations uint64        `json:"confirmations"`
 	StrippedSize  int32         `json:"strippedsize"`

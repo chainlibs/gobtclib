@@ -182,12 +182,12 @@ See GetBlock for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 16:09
  */
-func (c *Client) GetBlockAsync(blockHash *results.Hash) futures.FutureGetBlockResult {
+func (c *Client) GetBlockAsync(blockHash *results.Hash, verbosity *int) futures.FutureResult {
 	hash := ""
 	if blockHash != nil {
 		hash = blockHash.String()
 	}
-	cmd := NewCommand("getblock", hash, utils.Basis.Int(0))
+	cmd := NewCommand("getblock", hash, verbosity)
 	return c.sendCmd(cmd)
 }
 
@@ -200,27 +200,25 @@ block instead.
  * Author: architect.bian
  * Date: 2018/09/17 16:09
  */
-func (c *Client) GetBlock(blockHash *results.Hash) (*results.MsgBlock, error) {
-	return c.GetBlockAsync(blockHash).Receive()
+func (c *Client) GetBlockBytes(blockHash *results.Hash) (*[]byte, error) {
+	future := c.GetBlockAsync(blockHash, utils.Basis.Int(0))
+	result, err := futures.ReceiveFuture(future)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
 }
 
 /*
 Description:
-GetBlockVerboseAsync returns an instance of a type that can be used to get
-the result of the RPC at some future time by invoking the Receive function on
-the returned instance.
-
-See GetBlockVerbose for the blocking version and more details.
- * Author: architect.bian
- * Date: 2018/09/17 16:24
- */
-func (c *Client) GetBlockVerboseAsync(blockHash *results.Hash) futures.FutureGetBlockVerboseResult {
-	hash := ""
-	if blockHash != nil {
-		hash = blockHash.String()
-	}
-	cmd := NewCommand("getblock", hash, utils.Basis.Int(1))
-	return c.sendCmd(cmd)
+GetBlock returns a raw block from the server given its hash.
+See GetBlockVerbose to retrieve a data structure with information about the block instead.
+* Author: architect.bian
+* Date: 2018/09/17 16:09
+*/
+func (c *Client) GetBlock(blockHash *results.Hash) (*results.GetBlockResult, error) {
+	future := futures.FutureGetBlockResult(c.GetBlockAsync(blockHash, utils.Basis.Int(1)))
+	return future.Receive()
 }
 
 /*
@@ -233,41 +231,9 @@ See GetBlock to retrieve a raw block instead.
  * Author: architect.bian
  * Date: 2018/09/17 16:21
  */
-func (c *Client) GetBlockVerbose(blockHash *results.Hash) (*results.GetBlockVerboseResult, error) {
-	return c.GetBlockVerboseAsync(blockHash).Receive()
-}
-
-/*
-Description:
-GetBlockVerboseTxAsync returns an instance of a type that can be used to get
-the result of the RPC at some future time by invoking the Receive function on
-the returned instance.
-
-See GetBlockVerboseTx or the blocking version and more details.
- * Author: architect.bian
- * Date: 2018/09/17 16:52
- */
-func (c *Client) GetBlockVerboseTxAsync(blockHash *results.Hash) futures.FutureGetBlockVerboseTXResult {
-	hash := ""
-	if blockHash != nil {
-		hash = blockHash.String()
-	}
-	cmd := NewCommand("getblock", hash, utils.Basis.Int(2))
-	return c.sendCmd(cmd)
-}
-
-/*
-Description:
-GetBlockVerboseTx returns a data structure from the server with information
-about a block and its transactions given its hash.
-
-See GetBlockVerbose if only transaction hashes are preferred.
-See GetBlock to retrieve a raw block instead.
- * Author: architect.bian
- * Date: 2018/09/17 16:52
- */
-func (c *Client) GetBlockVerboseTx(blockHash *results.Hash) (*results.GetBlockVerboseTXResult, error) {
-	return c.GetBlockVerboseTxAsync(blockHash).Receive()
+func (c *Client) GetBlockVerboseTX(blockHash *results.Hash) (*results.GetBlockVerboseTXResult, error) {
+	future := futures.FutureGetBlockVerboseTXResult(c.GetBlockAsync(blockHash, utils.Basis.Int(2)))
+	return future.Receive()
 }
 
 /*
