@@ -83,38 +83,6 @@ func (c *Client) GetBlockHash(blockHeight int64) (*results.Hash, error) {
 
 /*
 Description:
-GetBlockHeaderVerboseAsync returns an instance of a type that can be used to get the
-result of the RPC at some future time by invoking the Receive function on the
-returned instance.
-
-See GetBlockHeader for the blocking version and more details.
- * Author: architect.bian
- * Date: 2018/09/15 17:51
- */
-func (c *Client) GetBlockHeaderVerboseAsync(blockHash *results.Hash) futures.FutureGetBlockHeaderVerboseResult {
-	hash := ""
-	if blockHash != nil {
-		hash = blockHash.String()
-	}
-	cmd := NewCommand("getblockheader", hash, utils.Basis.Bool(true))
-	return c.sendCmd(cmd)
-}
-
-/*
-Description:
-GetBlockHeaderVerbose returns a data structure with information about the
-blockheader from the server given its hash.
-
-See GetBlockHeader to retrieve a blockheader instead.
- * Author: architect.bian
- * Date: 2018/09/15 17:51
- */
-func (c *Client) GetBlockHeaderVerbose(blockHash *results.Hash) (*results.GetBlockHeaderVerboseResult, error) {
-	return c.GetBlockHeaderVerboseAsync(blockHash).Receive()
-}
-
-/*
-Description:
 GetBlockHeaderAsync returns an instance of a type that can be used to get the
 result of the RPC at some future time by invoking the Receive function on the
 returned instance.
@@ -123,26 +91,41 @@ See GetBlockHeader for the blocking version and more details.
  * Author: architect.bian
  * Date: 2018/09/17 15:23
  */
-func (c *Client) GetBlockHeaderAsync(blockHash *results.Hash) futures.FutureGetBlockHeaderResult {
+func (c *Client) GetBlockHeaderAsync(blockHash *results.Hash, verbose *bool) futures.FutureResult {
 	hash := ""
 	if blockHash != nil {
 		hash = blockHash.String()
 	}
-	cmd := NewCommand("getblockheader", hash, utils.Basis.Bool(false))
+	cmd := NewCommand("getblockheader", hash, verbose)
 	return c.sendCmd(cmd)
 }
 
 /*
 Description:
-GetBlockHeader returns the blockheader from the server given its hash.
+GetBlockHeaderBytes returns the bytes of blockheader from the server given its hash.
+See GetBlockHeader to retrieve a data structure with information about the block instead.
+ * Author: architect.bian
+ * Date: 2018/09/17 15:22
+ */
+func (c *Client) GetBlockHeaderBytes(blockHash *results.Hash) (*[]byte, error) {
+	future := c.GetBlockHeaderAsync(blockHash, utils.Basis.Bool(false))
+	result, err := futures.ReceiveFuture(future)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
 
-See GetBlockHeaderVerbose to retrieve a data structure with information about the
+/*
+Description:
+GetBlockHeader returns the blockheader from the server given its hash.
+See GetBlockHeader to retrieve a data structure with information about the
 block instead.
  * Author: architect.bian
  * Date: 2018/09/17 15:22
  */
-func (c *Client) GetBlockHeader(blockHash *results.Hash) (*results.BlockHeader, error) {
-	return c.GetBlockHeaderAsync(blockHash).Receive()
+func (c *Client) GetBlockHeader(blockHash *results.Hash) (*results.GetBlockHeaderResult, error) {
+	return futures.FutureGetBlockHeaderResult(c.GetBlockHeaderAsync(blockHash, utils.Basis.Bool(true))).Receive()
 }
 
 /*

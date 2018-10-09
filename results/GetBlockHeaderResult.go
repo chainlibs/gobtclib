@@ -2,13 +2,13 @@ package results
 
 /*
 Description:
-GetBlockHeaderVerboseResult models the data from the getblockheader command when
+GetBlockHeaderResult models the data from the getblockheader command when
 the verbose flag is set.  When the verbose flag is not set, getblockheader
 returns a hex-encoded string.
  * Author: architect.bian
  * Date: 2018/10/07 17:37
  */
-type GetBlockHeaderVerboseResult struct {
+type GetBlockHeaderResult struct {
 	Hash          string  `json:"hash"`
 	Confirmations uint64  `json:"confirmations"`
 	Height        int32   `json:"height"`

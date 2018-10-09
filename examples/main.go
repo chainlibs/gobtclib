@@ -32,15 +32,16 @@ func main() {
 	//demos.GetBestBlockHashTest()
 	//demos.GetBlockBytesTest()
 	//demos.GetBlockTest()
-	demos.GetBlockVerboseTXTest()
-	//demos.GetBlockCountTest()
-	//demos.GetDifficultyTest()
-	//demos.GetBlockHashTest()
-	//demos.GetBlockHeaderTest() //TODO failed
-	//demos.GetBlockHeaderVerboseTest()
+	//demos.GetBlockVerboseTXTest()
+	//demos.GetBlockVerboseTXTest()
 	//demos.GetBlockChainInfoTest()
-	//demos.GetBlockVerboseTest()
-	//demos.GetBlockVerboseTxTest()
+	//demos.GetBlockCountTest()
+	//demos.GetBlockHashTest()
+	//demos.GetBlockBytesTest()
+	demos.GetBlockHeaderTest()
+	//getchaintips //TODO
+	//getchaintxstats
+	//demos.GetDifficultyTest()
 	//demos.RescanBlocksTest() //TODO failed
 	//demos.GetCFilter() //TODO unimplemented
 	//demos.InvalidateBlockTest() //very dangerous

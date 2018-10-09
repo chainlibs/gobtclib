@@ -62,23 +62,23 @@ func GetBlockHashTest() {
 
 /*
 Description:
-a demo test of GetBlockHeaderVerbose, Get the special blockheader data structure.
+a demo test of GetBlockHeader, Get the special blockheader data structure.
  * Author: architect.bian
  * Date: 2018/09/14 13:13
  */
-func GetBlockHeaderVerboseTest() {
+func GetBlockHeaderBytesTest() {
 	hash, err := cli.GetBlockHash(1)
 	if err != nil {
 		log.Fatal("", "error", err)
 	}
 	log.Info("GetBlockHash", "hash", hash)
 	//hash, _ := client.NewHashFromStr("353eb168c70770b281f634fd0d22fbaee94b3fed1d76276e91165444e876f658")
-	header, err := cli.GetBlockHeaderVerbose(hash)
+	header, err := cli.GetBlockHeaderBytes(hash)
 	if err != nil {
 		log.Error("", "error", err)
 		panic(err)
 	}
-	log.Info("GetBlockHeaderVerbose", "header", header)
+	log.Info("GetBlockHeader", "header", string(*header))
 }
 
 /*
@@ -179,70 +179,6 @@ func GetBlockVerboseTXTest() {
 	}
 	log.Info("GetBlockVerboseTX", "block", block)
 }
-
-///*
-//Description:
-//a demo test of GetBlockVerboseTx, Get the special block data structure.
-// * Author: architect.bian
-// * Date: 2018/09/14 13:13
-// */
-//func GetBlockVerboseTxTest() {
-//	hash, err := cli.GetBlockHash(100)
-//	if err != nil {
-//		log.Fatal("", "error", err)
-//	}
-//	log.Info("GetBlockHash", "hash", hash)
-//	//hash, _ := client.NewHashFromStr("353eb168c70770b281f634fd0d22fbaee94b3fed1d76276e91165444e876f658")
-//	block, err := cli.GetBlockVerboseTx(hash)
-//	if err != nil {
-//		log.Error("", "error", err)
-//		panic(err)
-//	}
-//	log.Info("GetBlockVerboseTx", "block", block)
-//}
-
-///*
-//Description:
-//a demo test of RescanBlocks.
-// * Author: architect.bian
-// * Date: 2018/09/14 13:13
-// */
-//func RescanBlocksTest() { //TODO unregistered
-//	hash, err := cli.GetBlockHash(100)
-//	if err != nil {
-//		log.Fatal("", "error", err)
-//	}
-//	log.Info("GetBlockHash", "hash", hash)
-//	//hash, _ := client.NewHashFromStr("353eb168c70770b281f634fd0d22fbaee94b3fed1d76276e91165444e876f658")
-//	block, err := cli.RescanBlocks([]client.Hash{*hash})
-//	if err != nil {
-//		log.Error("", "error", err)
-//		panic(err)
-//	}
-//	log.Info("RescanBlocks", "block", block)
-//}
-
-///*
-//Description:
-//a demo test of InvalidateBlock, Permanently marks a block as invalid, as if
-//it violated a consensus rule.
-// * Author: architect.bian
-// * Date: 2018/09/14 13:13
-// */
-//func InvalidateBlockTest() {
-//	hash, err := cli.GetBlockHash(1)
-//	if err != nil {
-//		log.Fatal("", "error", err)
-//	}
-//	log.Info("GetBlockHash", "hash", hash)
-//	//hash, _ := client.NewHashFromStr("353eb168c70770b281f634fd0d22fbaee94b3fed1d76276e91165444e876f658")
-//	e := cli.InvalidateBlock(hash)
-//	if e != nil {
-//		log.Error("", "error", e)
-//		panic(e)
-//	}
-//	log.Info("InvalidateBlock", "result", "success")
-//}
 
 /*
 Description:
