@@ -32,10 +32,11 @@ Support RPC list
 ----------------
 
 - BLOCKCHAIN
+    - GetBlockHash
+    - GetBlock
     - GetBlockCount
     - GetBestBlockHash
     - GetDifficulty
-    - GetBlockHash
     - GetBlockHeaderVerbose
     - GetBlockChainInfo
     - GetBlockVerbose
