@@ -182,6 +182,22 @@ func GetBlockVerboseTXTest() {
 
 /*
 Description:
+a demo test of GetChainTips, Return information about all known tips in the block tree,
+including the main chain as well as orphaned branches.
+ * Author: architect.bian
+ * Date: 2018/10/10 10:45
+ */
+func GetChainTipsTest() {
+	result, err := cli.GetChainTips()
+	if err != nil {
+		log.Error("", "error", err)
+		panic(err)
+	}
+	log.Info("GetChainTips", "result", result)
+}
+
+/*
+Description:
 a demo test of VerifyChain, Verifies blockchain database.
  * Author: architect.bian
  * Date: 2018/09/14 13:13

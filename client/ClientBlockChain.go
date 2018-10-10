@@ -221,6 +221,34 @@ func (c *Client) GetBlockVerboseTX(blockHash *results.Hash) (*results.GetBlockVe
 
 /*
 Description:
+GetChainTipsAsync returns an instance of a type that can be used to get
+the result of the RPC at some future time by invoking the Receive function
+on the returned instance.
+
+See GetChainTips for more details.
+ * Author: architect.bian
+ * Date: 2018/09/17 14:49
+ */
+func (c *Client) GetChainTipsAsync() futures.FutureResult {
+	cmd := NewCommand("getchaintips")
+	return c.sendCmd(cmd)
+}
+
+/*
+Description:
+GetChainTips return information about all known tips in the block tree, including the main chain
+as well as orphaned branches.
+of the main chain.
+ * Author: architect.bian
+ * Date: 2018/09/17 14:47
+ */
+func (c *Client) GetChainTips() (*[]results.GetChainTipsResult, error) {
+	future := futures.FutureGetChainTipsResult(c.GetChainTipsAsync())
+	return future.Receive()
+}
+
+/*
+Description:
 GetDifficultyAsync returns an instance of a type that can be used to get the
 result of the RPC at some future time by invoking the Receive function on the
 returned instance.

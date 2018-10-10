@@ -22,8 +22,8 @@ structure from the server with information about the requested block.
  * Author: architect.bian
  * Date: 2018/09/17 16:26
  */
-func (r FutureGetBlockResult) Receive() (*results.GetBlockResult, error) {
-	res, err := ReceiveFuture(r)
+func (f FutureGetBlockResult) Receive() (*results.GetBlockResult, error) {
+	res, err := ReceiveFuture(f)
 	if err != nil {
 		return nil, err
 	}

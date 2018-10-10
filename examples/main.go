@@ -38,8 +38,8 @@ func main() {
 	//demos.GetBlockCountTest()
 	//demos.GetBlockHashTest()
 	//demos.GetBlockBytesTest()
-	demos.GetBlockHeaderTest()
-	//getchaintips //TODO
+	//demos.GetBlockHeaderTest()
+	demos.GetChainTipsTest()
 	//getchaintxstats
 	//demos.GetDifficultyTest()
 	//demos.RescanBlocksTest() //TODO failed
