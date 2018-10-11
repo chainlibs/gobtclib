@@ -32,29 +32,29 @@ Support RPC list
 ----------------
 
 - BLOCKCHAIN
-    -getbestblockhash
-    -getblock
-    -getblockchaininfo
-    -getblockcount
-    -getblockhash
-    -getblockheader
-    -getblockstats
-    -getchaintips
-    -getchaintxstats
-    -getdifficulty
-    -getmempoolancestors
-    -getmempooldescendants
-    -getmempoolentry
-    -getmempoolinfo
-    -getrawmempool
-    -gettxout
-    -gettxoutproof
-    -gettxoutsetinfo
-    -preciousblock
-    -pruneblockchain
-    -savemempool
-    -verifychain
-    -verifytxoutproof
+    - getbestblockhash
+    - getblock
+    - getblockchaininfo
+    - getblockcount
+    - getblockhash
+    - getblockheader
+    - getblockstats
+    - getchaintips
+    - getchaintxstats
+    - getdifficulty
+    - getmempoolancestors
+    - getmempooldescendants
+    - getmempoolentry
+    - getmempoolinfo
+    - getrawmempool
+    - gettxout
+    - gettxoutproof
+    - gettxoutsetinfo
+    - preciousblock
+    - pruneblockchain
+    - savemempool
+    - verifychain
+    - verifytxoutproof
 - CONTROL
 - GENERATING
 - MINING
