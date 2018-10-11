@@ -12,7 +12,7 @@ GetBlockChainInfoAsync RPC invocation (or an applicable error).
  * Author: architect.bian
  * Date: 2018/09/17 14:51
  */
-type FutureGetBlockChainInfoResult chan *base.Response
+type FutureGetMempoolInfoResult chan *base.Response
 
 /*
 Description:
@@ -21,13 +21,13 @@ result provided by the server.
  * Author: architect.bian
  * Date: 2018/09/17 14:52
  */
-func (r FutureGetBlockChainInfoResult) Receive() (*results.GetBlockChainInfoResult, error) {
+func (r FutureGetMempoolInfoResult) Receive() (*results.GetMempoolInfoResult, error) {
 	res, err := ReceiveFuture(r)
 	if err != nil {
 		return nil, err
 	}
 
-	var result results.GetBlockChainInfoResult
+	var result results.GetMempoolInfoResult
 	if err := json.Unmarshal(res, &result); err != nil {
 		return nil, err
 	}

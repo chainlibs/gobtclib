@@ -20,12 +20,12 @@ data structure requested from the server given its hash.
  * Author: architect.bian
  * Date: 2018/08/26 18:56
  */
-func (r FutureResult) Receive(result interface{}) (*interface{}, error) {
+func (r FutureResult) Receive() (*interface{}, error) {
 	res, err := ReceiveFuture(r)
 	if err != nil {
 		return nil, err
 	}
-
+	var result interface{}
 	// Unmarshal result as a string.
 	err = json.Unmarshal(res, &result)
 	if err != nil {

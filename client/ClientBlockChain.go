@@ -4,6 +4,7 @@ import (
 	"github.com/chainlibs/gobtclib/results"
 	"github.com/chainlibs/gobtclib/futures"
 	"github.com/chainlibs/gobtclib/utils"
+	"encoding/hex"
 )
 
 /*
@@ -221,6 +222,51 @@ func (c *Client) GetBlockVerboseTX(blockHash *results.Hash) (*results.GetBlockVe
 
 /*
 Description:
+GetBlockStatsAsync returns an instance of a type that can be used to get the
+result of the RPC at some future time by invoking the Receive function on the
+returned instance.
+
+See GetBlockStats for more details.
+ * Author: architect.bian
+ * Date: 2018/09/17 16:09
+ */
+func (c *Client) GetBlockStatsAsync(heightOrHash interface{}, stats *[]string) futures.FutureResult {
+	cmd := NewCommand("getblockstats", heightOrHash, stats)
+	return c.sendCmd(cmd)
+}
+
+/*
+Description:
+GetBlockStats Compute per block statistics for a given window. All amounts are in satoshis.
+ * Author: architect.bian
+ * Date: 2018/10/10 15:17
+ */
+func (c *Client) GetBlockStats(heightOrHash interface{}) (*results.GetBlockStatsResult, error) {
+	var result results.GetBlockStatsResult
+	_, err := c.GetBlockStatsAsync(heightOrHash, nil).Receive() //TODO result is nil? need *?
+	if err != nil {
+		return nil, err
+	}
+	return &result, err
+}
+
+/*
+Description:
+GetBlockStats Compute per block statistics for a given window. All amounts are in satoshis.
+ * Author: architect.bian
+ * Date: 2018/10/10 15:17
+ */
+func (c *Client) GetBlockStatsEntire(heightOrHash interface{}, stats *[]string) (*map[interface{}]interface{}, error) {
+	var result map[interface{}]interface{}
+	_, err := c.GetBlockStatsAsync(heightOrHash, nil).Receive()
+	if err != nil {
+		return nil, err
+	}
+	return &result, err
+}
+
+/*
+Description:
 GetChainTipsAsync returns an instance of a type that can be used to get
 the result of the RPC at some future time by invoking the Receive function
 on the returned instance.
@@ -249,6 +295,52 @@ func (c *Client) GetChainTips() (*[]results.GetChainTipsResult, error) {
 
 /*
 Description:
+GetChainTXStatsAsync returns an instance of a type that can be used to get the
+result of the RPC at some future time by invoking the Receive function on the
+returned instance.
+
+See GetChainTXStats for more details.
+ * Author: architect.bian
+ * Date: 2018/09/17 16:09
+ */
+func (c *Client) GetChainTXStatsAsync(nblocks int32, blockhash *results.Hash) futures.FutureResult {
+	cmd := NewCommand("getchaintxstats", nblocks, blockhash.String())
+	return c.sendCmd(cmd)
+}
+
+/*
+Description:
+GetChainTXStats Compute statistics about the total number and rate of transactions in the chain.
+ * Author: architect.bian
+ * Date: 2018/10/11 10:23
+ */
+func (c *Client) GetChainTXStats() (*results.GetChainTXStatsResult, error) {
+	cmd := NewCommand("getchaintxstats")
+	var err error
+	result, err := futures.FutureGetChainTXStatsResult(c.sendCmd(cmd)).Receive()
+	if err != nil {
+		return nil, err
+	}
+	return result, err
+}
+
+/*
+Description:
+GetChainTXStatsEntire Compute statistics about the total number and rate of transactions in the chain.
+Can specify nblocks blockhash
+ * Author: architect.bian
+ * Date: 2018/10/11 10:24
+ */
+func (c *Client) GetChainTXStatsEntire(nblocks int32, blockhash *results.Hash) (*results.GetChainTXStatsResult, error) {
+	result, err := futures.FutureGetChainTXStatsResult(c.GetChainTXStatsAsync(nblocks, blockhash)).Receive()
+	if err != nil {
+		return nil, err
+	}
+	return result, err
+}
+
+/*
+Description:
 GetDifficultyAsync returns an instance of a type that can be used to get the
 result of the RPC at some future time by invoking the Receive function on the
 returned instance.
@@ -271,6 +363,152 @@ minimum difficulty. The result is bits/params.PowLimitBits
  */
 func (c *Client) GetDifficulty() (float64, error) {
 	return c.GetDifficultyAsync().Receive()
+}
+
+/*
+Description:
+GetMempoolAncestorsAsync returns an instance of a type that can be used to get the
+result of the RPC at some future time by invoking the Receive function on the
+returned instance.
+
+See GetMempoolAncestors for the blocking version and more details.
+ * Author: architect.bian
+ * Date: 2018/10/11 10:19
+ */
+func (c *Client) GetMempoolAncestorsAsync(txid results.Hash, verbose bool) futures.FutureResult {
+	cmd := NewCommand("getmempoolancestors", txid.String(), verbose)
+	return c.sendCmd(cmd)
+}
+
+/*
+Description: 
+GetMempoolAncestors If txid is in the mempool, returns all in-mempool ancestors.
+ * Author: architect.bian
+ * Date: 2018/10/11 11:41
+ */
+func (c *Client) GetMempoolAncestors(txid results.Hash) (*[]string, error) {
+	var result []string
+	_, err := c.GetMempoolAncestorsAsync(txid, false).Receive()
+	if err != nil {
+		return nil, err
+	}
+	return &result, err
+}
+
+/*
+Description:
+GetMempoolAncestorsVerbose If txid is in the mempool, returns all in-mempool ancestors.
+verbose is true for a json object.
+ * Author: architect.bian
+ * Date: 2018/10/11 11:42
+ */
+func (c *Client) GetMempoolAncestorsVerbose(txid results.Hash) (*map[string]interface{}, error) {
+	var result map[string]interface{}
+	_, err := c.GetMempoolAncestorsAsync(txid, true).Receive()
+	if err != nil {
+		return nil, err
+	}
+	return &result, err
+}
+
+/*
+Description:
+GetMempoolDescendantsAsync returns an instance of a type that can be used to get the
+result of the RPC at some future time by invoking the Receive function on the
+returned instance.
+
+See GetMempoolDescendants for the blocking version and more details.
+ * Author: architect.bian
+ * Date: 2018/10/11 10:19
+ */
+func (c *Client) GetMempoolDescendantsAsync(txid results.Hash, verbose bool) futures.FutureResult {
+	cmd := NewCommand("getmempooldescendants", txid.String(), verbose)
+	return c.sendCmd(cmd)
+}
+
+/*
+Description:
+GetMempoolDescendants If txid is in the mempool, returns all in-mempool descendants.
+ * Author: architect.bian
+ * Date: 2018/10/11 11:49
+ */
+func (c *Client) GetMempoolDescendants(txid results.Hash) (*[]string, error) {
+	var result []string
+	_, err := c.GetMempoolDescendantsAsync(txid, false).Receive()
+	if err != nil {
+		return nil, err
+	}
+	return &result, err
+}
+
+/*
+Description:
+GetMempoolDescendantsVerbose If txid is in the mempool, returns all in-mempool descendants.
+ * Author: architect.bian
+ * Date: 2018/10/11 11:49
+ */
+func (c *Client) GetMempoolDescendantsVerbose(txid results.Hash) (*map[string]interface{}, error) {
+	var result map[string]interface{}
+	_, err := c.GetMempoolDescendantsAsync(txid, true).Receive()
+	if err != nil {
+		return nil, err
+	}
+	return &result, err
+}
+
+/*
+Description:
+GetMempoolEntryAsync returns an instance of a type that can be used to get the
+result of the RPC at some future time by invoking the Receive function on the
+returned instance.
+
+See GetMempoolEntry for the blocking version and more details.
+ * Author: architect.bian
+ * Date: 2018/09/17 20:23
+ */
+func (c *Client) GetMempoolEntryAsync(txHash string) futures.FutureGetMempoolEntryResult {
+	cmd := NewCommand("getmempoolentry", txHash)
+	return c.sendCmd(cmd)
+}
+
+/*
+Description:
+GetMempoolEntry returns a data structure with information about the
+transaction in the memory pool given its hash.
+ * Author: architect.bian
+ * Date: 2018/09/17 20:23
+ */
+func (c *Client) GetMempoolEntry(txHash string) (*results.GetMempoolEntryResult, error) { //TODO txhash changed to hash?
+	return c.GetMempoolEntryAsync(txHash).Receive()
+}
+
+/*
+Description:
+GetMempoolInfoAsync returns an instance of a type that can be used to get the
+result of the RPC at some future time by invoking the Receive function on the
+returned instance.
+
+See GetMempoolInfo for the blocking version and more details.
+ * Author: architect.bian
+ * Date: 2018/10/11 10:19
+ */
+func (c *Client) GetMempoolInfoAsync() futures.FutureResult {
+	cmd := NewCommand("getmempoolinfo")
+	return c.sendCmd(cmd)
+}
+
+/*
+Description: 
+GetMempoolInfo Returns details on the active state of the TX memory pool.
+ * Author: architect.bian
+ * Date: 2018/10/11 11:52
+ */
+func (c *Client) GetMempoolInfo() (*results.GetMempoolInfoResult, error) {
+	result, err := futures.FutureGetMempoolInfoResult(c.GetMempoolInfoAsync()).Receive()
+	if err != nil {
+		return nil, err
+	}
+	return result, err
 }
 
 /*
@@ -332,28 +570,177 @@ func (c *Client) GetRawMempoolVerbose() (map[string]results.GetRawMempoolVerbose
 
 /*
 Description:
-GetMempoolEntryAsync returns an instance of a type that can be used to get the
-result of the RPC at some future time by invoking the Receive function on the
-returned instance.
+GetTxOutAsync returns an instance of a type that can be used to get
+the result of the RPC at some future time by invoking the Receive function on
+the returned instance.
 
-See GetMempoolEntry for the blocking version and more details.
+See GetTxOut for the blocking version and more details.
  * Author: architect.bian
- * Date: 2018/09/17 20:23
+ * Date: 2018/09/17 21:07
  */
-func (c *Client) GetMempoolEntryAsync(txHash string) futures.FutureGetMempoolEntryResult {
-	cmd := NewCommand("getmempoolentry", txHash)
+func (c *Client) GetTxOutAsync(txHash *results.Hash, index uint32, mempool bool) futures.FutureGetTxOutResult {
+	hash := ""
+	if txHash != nil {
+		hash = txHash.String()
+	}
+	cmd := NewCommand("gettxout", hash, index, &mempool)
 	return c.sendCmd(cmd)
 }
 
 /*
 Description:
-GetMempoolEntry returns a data structure with information about the
-transaction in the memory pool given its hash.
+GetTxOut returns the transaction output info if it's unspent and
+nil, otherwise.
  * Author: architect.bian
- * Date: 2018/09/17 20:23
+ * Date: 2018/09/17 21:07
  */
-func (c *Client) GetMempoolEntry(txHash string) (*results.GetMempoolEntryResult, error) { //TODO txhash changed to hash?
-	return c.GetMempoolEntryAsync(txHash).Receive()
+func (c *Client) GetTxOut(txHash *results.Hash, index uint32, mempool bool) (*results.GetTxOutResult, error) {
+	return c.GetTxOutAsync(txHash, index, mempool).Receive()
+}
+
+/*
+Description:
+GetTXOutProofAsync returns an instance of a type that can be used to get the
+result of the RPC at some future time by invoking the Receive function on the
+returned instance.
+
+See GetTXOutProof for the blocking version and more details.
+ * Author: architect.bian
+ * Date: 2018/10/11 10:20
+ */
+func (c *Client) GetTXOutProofAsync(txids []string, blockhash results.Hash) futures.FutureResult {
+	cmd := NewCommand("gettxoutproof", txids, blockhash)
+	return c.sendCmd(cmd)
+}
+
+func (c *Client) GetTXOutProof(txids ...string) (*[]byte, error) {
+	cmd := NewCommand("gettxoutproof", txids)
+	result, err := futures.ReceiveFuture(c.sendCmd(cmd))
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (c *Client) GetTXOutProofEntire(txids []string, blockhash results.Hash) (*[]byte, error) {
+	future := c.GetTXOutProofAsync(txids, blockhash)
+	result, err := futures.ReceiveFuture(future)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+/*
+Description:
+GetTXOutSetInfoAsync returns an instance of a type that can be used to get the
+result of the RPC at some future time by invoking the Receive function on the
+returned instance.
+
+See GetTXOutSetInfo for the blocking version and more details.
+ * Author: architect.bian
+ * Date: 2018/10/11 10:20
+ */
+func (c *Client) GetTXOutSetInfoAsync() futures.FutureResult {
+	cmd := NewCommand("gettxoutsetinfo")
+	return c.sendCmd(cmd)
+}
+
+func (c *Client) GetTXOutSetInfo() (*results.GetTXOutSetInfoResult, error) {
+	result, err := futures.FutureGetTXOutSetInfoResult(c.GetTXOutSetInfoAsync()).Receive()
+	if err != nil {
+		return nil, err
+	}
+	return result, err
+}
+
+/*
+Description:
+PreciousBlockAsync returns an instance of a type that can be used to get the
+result of the RPC at some future time by invoking the Receive function on the
+returned instance.
+
+See PreciousBlock for the blocking version and more details.
+ * Author: architect.bian
+ * Date: 2018/10/11 10:20
+ */
+func (c *Client) PreciousBlockAsync(blockhash results.Hash) futures.FutureResult {
+	cmd := NewCommand("preciousblock", blockhash.String())
+	return c.sendCmd(cmd)
+}
+
+/*
+Description: 
+PreciousBlock Treats a block as if it were received before others with the same work.
+ * Author: architect.bian
+ * Date: 2018/10/11 12:33
+ */
+func (c *Client) PreciousBlock(blockhash results.Hash) (error) {
+	future := c.PreciousBlockAsync(blockhash)
+	_, err := futures.ReceiveFuture(future)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+/*
+Description:
+PruneBlockchainAsync returns an instance of a type that can be used to get the
+result of the RPC at some future time by invoking the Receive function on the
+returned instance.
+
+See PruneBlockchain for the blocking version and more details.
+ * Author: architect.bian
+ * Date: 2018/10/11 10:20
+ */
+func (c *Client) PruneBlockchainAsync(height int32) futures.FutureResult {
+	cmd := NewCommand("pruneblockchain", height)
+	return c.sendCmd(cmd)
+}
+
+/*
+Description: 
+PruneBlockchain prune blocks
+ * Author: architect.bian
+ * Date: 2018/10/11 12:33
+ */
+func (c *Client) PruneBlockchain(height int32) (int32, error) {
+	var result int32
+	_, err := c.PruneBlockchainAsync(height).Receive()
+	if err != nil {
+		return -1, err
+	}
+	return result, nil
+}
+
+/*
+Description:
+SaveMempoolAsync returns an instance of a type that can be used to get the
+result of the RPC at some future time by invoking the Receive function on the
+returned instance.
+
+See SaveMempool for the blocking version and more details.
+ * Author: architect.bian
+ * Date: 2018/10/11 10:20
+ */
+func (c *Client) SaveMempoolAsync() futures.FutureResult {
+	cmd := NewCommand("savemempool")
+	return c.sendCmd(cmd)
+}
+
+/*
+Description:
+SaveMempool Dumps the mempool to disk. It will fail until the previous dump is fully loaded.
+ * Author: architect.bian
+ * Date: 2018/10/11 12:32
+ */
+func (c *Client) SaveMempool() (error) {
+	_, err := futures.ReceiveFuture(c.SaveMempoolAsync())
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 /*
@@ -382,6 +769,32 @@ See VerifyChainLevel and VerifyChainBlocks to override the defaults.
  */
 func (c *Client) VerifyChain() (bool, error) {
 	return c.VerifyChainAsync().Receive()
+}
+
+/*
+Description:
+VerifyTXOutProofAsync returns an instance of a type that can be used to get the
+result of the RPC at some future time by invoking the Receive function on the
+returned instance.
+
+See VerifyTXOutProof for the blocking version and more details.
+ * Author: architect.bian
+ * Date: 2018/10/11 10:20
+ */
+func (c *Client) VerifyTXOutProofAsync(proof []byte) futures.FutureResult {
+	dst := make([]byte, hex.EncodedLen(len(proof)))
+	hex.Encode(dst, proof)
+	cmd := NewCommand("verifytxoutproof", string(dst))
+	return c.sendCmd(cmd)
+}
+
+func (c *Client) VerifyTXOutProof(proof []byte) (*[]string, error) {
+	var result []string
+	_, err := c.VerifyTXOutProofAsync(proof).Receive()
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
 }
 
 /*
@@ -450,34 +863,4 @@ See VerifyChain and VerifyChainLevel to use defaults.
  */
 func (c *Client) VerifyChainBlocks(checkLevel, numBlocks int32) (bool, error) {
 	return c.VerifyChainBlocksAsync(checkLevel, numBlocks).Receive()
-}
-
-/*
-Description:
-GetTxOutAsync returns an instance of a type that can be used to get
-the result of the RPC at some future time by invoking the Receive function on
-the returned instance.
-
-See GetTxOut for the blocking version and more details.
- * Author: architect.bian
- * Date: 2018/09/17 21:07
- */
-func (c *Client) GetTxOutAsync(txHash *results.Hash, index uint32, mempool bool) futures.FutureGetTxOutResult {
-	hash := ""
-	if txHash != nil {
-		hash = txHash.String()
-	}
-	cmd := NewCommand("gettxout", hash, index, &mempool)
-	return c.sendCmd(cmd)
-}
-
-/*
-Description:
-GetTxOut returns the transaction output info if it's unspent and
-nil, otherwise.
- * Author: architect.bian
- * Date: 2018/09/17 21:07
- */
-func (c *Client) GetTxOut(txHash *results.Hash, index uint32, mempool bool) (*results.GetTxOutResult, error) {
-	return c.GetTxOutAsync(txHash, index, mempool).Receive()
 }
