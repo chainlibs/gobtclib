@@ -56,6 +56,11 @@ Support RPC list
     - verifychain
     - verifytxoutproof
 - CONTROL
+    - getmemoryinfo
+    - help
+    - logging
+    - stop
+    - uptime
 - GENERATING
 - MINING
 - NETWORK

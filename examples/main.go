@@ -29,7 +29,8 @@ func main() {
 	}
 	demos.Initialize(cfg)
 	defer demos.Shutdown()
-	demos.GetBestBlockHashTest()
+	//Blockchain section
+	//demos.GetBestBlockHashTest()
 	//demos.GetBlockBytesTest()
 	//demos.GetBlockTest()
 	//demos.GetBlockVerboseTXTest()
@@ -61,4 +62,11 @@ func main() {
 	//demos.VerifyTXOutProofTest()
 	//demos.VerifyChainLevelTest()
 	//demos.VerifyChainBlocksTest()
+
+	//Control section
+	//demos.GetMemoryInfoTest()
+	//demos.GetMemoryInfo4MallocInfoTest()
+	//demos.HelpTest()
+	//demos.StopTest()
+	demos.UptimeTest()
 }
