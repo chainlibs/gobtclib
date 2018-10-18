@@ -50,3 +50,20 @@ type Command struct {
 	args []interface{}
 }
 
+func (c *Command) AddArgs(args ...interface{}) {
+	c.args = append(c.args[:], args...)
+}
+
+func (c *Command) AddJsonArgs(args ...interface{}) error {
+	slice := make([]interface{}, 0)
+	for _, item := range args  {
+		bytes, err := json.Marshal(item)
+		if err != nil {
+			return nil
+		}
+		slice = append(slice, string(bytes))
+	}
+
+	c.args = append(c.args[:], slice...)
+	return nil
+}

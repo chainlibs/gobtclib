@@ -29,7 +29,10 @@ func main() {
 	}
 	demos.Initialize(cfg)
 	defer demos.Shutdown()
-	//Blockchain section
+	//common rpc method
+	//demos.SendTest() cli.Send("command", args...)
+
+	//Blockchain rpc methods
 	//demos.GetBestBlockHashTest()
 	//demos.GetBlockBytesTest()
 	//demos.GetBlockTest()
@@ -63,10 +66,82 @@ func main() {
 	//demos.VerifyChainLevelTest()
 	//demos.VerifyChainBlocksTest()
 
-	//Control section
+	//Control rpc methods
 	//demos.GetMemoryInfoTest()
 	//demos.GetMemoryInfo4MallocInfoTest()
 	//demos.HelpTest()
 	//demos.StopTest()
-	demos.UptimeTest()
+	//demos.UptimeTest()
+
+	//RawTransactions rpc methods
+	//demos.CombinePSBTTest()
+	//demos.CombineRawTransactionTest()
+	//demos.ConvertTopSBTTest()
+	//demos.CreatepSBTTest()
+	//demos.CreateRawTransactionTest()
+	//demos.DecodepSBTTest()
+	//demos.DecodeRawTransactionTest()
+	//demos.DecodeScriptTest() //ok
+	//demos.FinalizepSBTTest()
+	//demos.FundrawTransactionTest()
+	//demos.GetRawTransactionTest()
+	//demos.SendRawTransactionTest()
+	//demos.SignRawTransactionWithKeyTest()
+	//demos.TestMempoolAcceptTest()
+
+	//Wallet rpc methods
+	//demos.WalletTestInitialize() //ok
+	//demos.AbandonTransactionTest() //ok
+	//demos.AbortRescanTest() //ok
+	//demos.AddMultiSigAddressTest() //ok
+	//demos.BackupWalletTest() //ok
+	//demos.BumpFeeTest() //ok
+	//demos.CreateWalletTest() //ok
+	//demos.DumpPrivkeyTest() //ok
+	//demos.DumpWalletTest() //ok
+	//demos.EncryptWalletTest() //ok
+	//demos.GetAddressesByLabelTest() //ok
+	//demos.GetAddressInfoTest() //ok
+	//demos.GetBalanceTest() //ok
+	//demos.GetBalanceEntireTest() //ok
+	//demos.GetNewAddressTest() //ok
+	//demos.GetNewAddressEntireTest() //ok
+	//demos.GetRawChangeAddressTest() //ok
+	//demos.GetReceivedByAddressTest() //ok
+	//demos.GetTransactionTest() //ok
+	//demos.GetUnconfirmedBalanceTest() //ok
+	//demos.GetWalletInfoTest() //ok
+	//demos.ImportaddressTest() //ok
+	//demos.ImportMultiTest() //ok
+	//demos.ImportPrivkeyTest() //ok
+	//demos.ImportPrunedFundsTest() //TODO
+	//demos.ImportPubkeyTest() //ok
+	//demos.ImportWalletTest() //test exception
+	//demos.KeypoolRefillTest() //ok
+	//demos.ListAddressGroupingsTest() //ok
+	//demos.ListLabelsTest() //ok
+	//demos.ListLockUnspentTest() // todo https://bitcoincore.org/en/doc/0.17.0/rpc/wallet/listlockunspent/
+	//demos.ListReceivedByAddressTest() //ok
+	//demos.ListSinceBlockTest() //ok
+	//demos.ListTransactionsTest() //ok
+	//demos.ListUnspentTest() //ok
+	//demos.ListUnspentEntireTest() //ok
+	//demos.ListWalletsTest() //ok
+	//demos.LoadWalletTest() //ok
+	//demos.LockUnspentTest() //ok
+	//demos.RemovePrunedFundsTest() //ok
+	//demos.RescanBlockChainTest() //ok
+	//demos.SendManyTest() //ok
+	//demos.SendToAddressTest() //ok
+	//demos.SendToAddressEntireTest() //ok
+	//demos.SetHDSeedTest() //ok
+	//demos.SetTXFeeTest() //ok
+	//demos.SignMessageTest() //ok
+	//demos.SignRawtransactionWithWalletTest() //TODO
+	//demos.UnloadWalletTest() //ok
+	//demos.WalletCreateFundedPSBTTest() //TODO no implement
+	//demos.WalletLockTest() //ok
+	//demos.WalletPassphraseTest() //ok
+	//demos.WalletPassphraseChangeTest() //ok
+	//demos.WalletProcessPSBTTest()
 }
