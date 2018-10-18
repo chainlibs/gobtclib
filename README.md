@@ -65,6 +65,16 @@ Support RPC list
 - MINING
 - NETWORK
 - RAWTRANSACTIONS
+    - CombineRawTransaction
+    - CreateRawTransaction
+    - DecodeRawTransaction
+    - DecodeScript
+    - FundRawTransaction
+    - GetRawTransaction
+    - GetRawTransactionVerbose
+    - SendRawTransaction
+    - SignRawTransactionWithKey
+    - TestMempoolAccept
 - UTIL
 - WALLET
     - abandontransaction
