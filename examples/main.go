@@ -75,19 +75,20 @@ func main() {
 
 	//RawTransactions rpc methods
 	//demos.CombinePSBTTest()
-	//demos.CombineRawTransactionTest()
-	//demos.ConvertTopSBTTest()
+	//demos.CombineRawTransactionTest() //ok
+	//demos.ConvertToPSBTTest()
 	//demos.CreatepSBTTest()
-	//demos.CreateRawTransactionTest()
-	//demos.DecodepSBTTest()
-	//demos.DecodeRawTransactionTest()
+	//demos.CreateRawTransactionTest() //ok
+	//demos.DecodePSBTTest()
+	//demos.DecodeRawTransactionTest() //ok
 	//demos.DecodeScriptTest() //ok
-	//demos.FinalizepSBTTest()
-	//demos.FundrawTransactionTest()
-	//demos.GetRawTransactionTest()
-	//demos.SendRawTransactionTest()
-	//demos.SignRawTransactionWithKeyTest()
-	//demos.TestMempoolAcceptTest()
+	//demos.FinalizePSBTTest()
+	//demos.FundRawTransactionTest() //ok
+	//demos.GetRawTransactionTest() //ok
+	//demos.GetRawTransactionVerboseTest() //ok
+	//demos.SendRawTransactionTest() //ok
+	//demos.SignRawTransactionWithKeyTest() //ok
+	//demos.TestMempoolAcceptTest() //ok
 
 	//Wallet rpc methods
 	//demos.WalletTestInitialize() //ok

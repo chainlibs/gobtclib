@@ -146,8 +146,9 @@ it is not stored in the wallet or transmitted to the network.
  * Author: architect.bian
  * Date: 2018/10/15 20:31
  */
-func (c *Client) CreateRawTransaction(inputs interface{}, outputs interface{}, locktime int32, replaceable bool) (*string, error) {
-	return c.CreateRawTransactionAsync(inputs, outputs, locktime, replaceable).Receive()
+func (c *Client) CreateRawTransaction(inputs []map[string]interface{}, outputs []map[string]interface{},
+	locktime int32, replaceable bool) (*string, error) {
+		return c.CreateRawTransactionAsync(inputs, outputs, locktime, replaceable).Receive()
 }
 
 /*
@@ -185,8 +186,8 @@ See DecodeRawTransaction for more details.
  * Author: architect.bian
  * Date: 2018/10/15 20:09
  */
-func (c *Client) DecodeRawTransactionAsync(tx []byte, isWitness bool) futures.FutureResult {
-	cmd := NewCommand("decoderawtransaction", string(tx), isWitness)
+func (c *Client) DecodeRawTransactionAsync(txHex string, isWitness bool) futures.FutureResult {
+	cmd := NewCommand("decoderawtransaction", txHex, isWitness)
 	return c.sendCmd(cmd)
 }
 
@@ -196,8 +197,8 @@ Return a JSON object representing the serialized, hex-encoded transaction.
  * Author: architect.bian
  * Date: 2018/10/15 20:34
  */
-func (c *Client) DecodeRawTransaction(tx []byte, isWitness bool) (*interface{}, error) {
-	return c.DecodeRawTransactionAsync(tx, isWitness).Receive()
+func (c *Client) DecodeRawTransaction(txHex string, isWitness bool) (*interface{}, error) {
+	return c.DecodeRawTransactionAsync(txHex, isWitness).Receive()
 }
 
 /*
@@ -263,8 +264,8 @@ See FundRawTransaction for more details.
  * Author: architect.bian
  * Date: 2018/10/15 20:09
  */
-func (c *Client) FundRawTransactionAsync(tx []byte, options map[string]interface{}, iswitness bool) futures.FutureResult {
-	cmd := NewCommand("fundrawtransaction", tx, options, iswitness)
+func (c *Client) FundRawTransactionAsync(txHex string, options map[string]interface{}, iswitness bool) futures.FutureResult {
+	cmd := NewCommand("fundrawtransaction", txHex, options, iswitness)
 	return c.sendCmd(cmd)
 }
 
@@ -283,8 +284,8 @@ Only pay-to-pubkey, multisig, and P2SH versions thereof are currently supported 
  * Author: architect.bian
  * Date: 2018/10/15 20:36
  */
-func (c *Client) FundRawTransaction(tx []byte, options map[string]interface{}, iswitness bool) (*interface{}, error) {
-	return c.FundRawTransactionAsync(tx, options, iswitness).Receive()
+func (c *Client) FundRawTransaction(txHex string, options map[string]interface{}, iswitness bool) (*interface{}, error) {
+	return c.FundRawTransactionAsync(txHex, options, iswitness).Receive()
 }
 
 /*
@@ -298,7 +299,10 @@ See GetRawTransaction for more details.
  * Date: 2018/10/15 20:09
  */
 func (c *Client) GetRawTransactionAsync(txid string, verbose bool, blockhash string) futures.FutureResult {
-	cmd := NewCommand("getrawtransaction", txid, verbose, blockhash)
+	cmd := NewCommand("getrawtransaction", txid, verbose)
+	if blockhash != "" {
+		cmd.AddArgs(blockhash)
+	}
 	return c.sendCmd(cmd)
 }
 
@@ -315,9 +319,12 @@ Return the raw transaction data.
  * Author: architect.bian
  * Date: 2018/10/15 20:41
  */
-func (c *Client) GetRawTransaction(txid string, blockhash string) ([]byte, error) {
-	cmd := NewCommand("getrawtransaction", txid, false, blockhash)
-	return futures.FutureByteArray(c.sendCmd(cmd)).Receive()
+func (c *Client) GetRawTransaction(txid string, blockhash string) (*string, error) {
+	result, err := futures.FutureString(c.GetRawTransactionAsync(txid, false, blockhash)).Receive()
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 /*
@@ -340,8 +347,8 @@ See SendRawTransaction for more details.
  * Author: architect.bian
  * Date: 2018/10/15 20:09
  */
-func (c *Client) SendRawTransactionAsync(tx []byte, allowhighfees bool) futures.FutureResult {
-	cmd := NewCommand("sendrawtransaction", tx, allowhighfees)
+func (c *Client) SendRawTransactionAsync(txHex string, allowhighfees bool) futures.FutureResult {
+	cmd := NewCommand("sendrawtransaction", txHex, allowhighfees)
 	return c.sendCmd(cmd)
 }
 
@@ -353,8 +360,8 @@ Also see createrawtransaction and signrawtransaction calls.
  * Author: architect.bian
  * Date: 2018/10/15 20:54
  */
-func (c *Client) SendRawTransaction(tx []byte, allowhighfees bool) (*interface{}, error) {
-	return c.SendRawTransactionAsync(tx, allowhighfees).Receive()
+func (c *Client) SendRawTransaction(txHex string, allowhighfees bool) (*interface{}, error) {
+	return c.SendRawTransactionAsync(txHex, allowhighfees).Receive()
 }
 
 /*
@@ -367,8 +374,8 @@ See SignRawTransactionWithKey for more details.
  * Author: architect.bian
  * Date: 2018/10/15 20:09
  */
-func (c *Client) SignRawTransactionWithKeyAsync(tx []byte, privkeys []string, prevtxs interface{}, sighashtype string) futures.FutureResult {
-	cmd := NewCommand("signrawtransactionwithkey", tx, privkeys, prevtxs, sighashtype)
+func (c *Client) SignRawTransactionWithKeyAsync(txHex string, privkeys []string, prevtxs interface{}, sighashtype string) futures.FutureResult {
+	cmd := NewCommand("signrawtransactionwithkey", txHex, privkeys, prevtxs, sighashtype)
 	return c.sendCmd(cmd)
 }
 
@@ -382,8 +389,22 @@ this transaction depends on but may not yet be in the block chain.
  * Author: architect.bian
  * Date: 2018/10/15 21:11
  */
-func (c *Client) SignRawTransactionWithKey(tx []byte, privkeys []string, prevtxs interface{}, sighashtype string) (*interface{}, error) {
-	return c.SignRawTransactionWithKeyAsync(tx, privkeys, prevtxs, sighashtype).Receive()
+func (c *Client) SignRawTransactionWithKey(txHex string, privkeys []string) (*interface{}, error) {
+	return c.SignRawTransactionWithKeyEntire(txHex, privkeys, nil, "ALL")
+}
+
+/*
+Description:
+Sign inputs for raw transaction (serialized, hex-encoded).
+The second argument is an array of base58-encoded private
+keys that will be the only keys used to sign the transaction.
+The third optional argument (may be null) is an array of previous transaction outputs that
+this transaction depends on but may not yet be in the block chain.
+ * Author: architect.bian
+ * Date: 2018/10/15 21:11
+ */
+func (c *Client) SignRawTransactionWithKeyEntire(txHex string, privkeys []string, prevtxs interface{}, sighashtype string) (*interface{}, error) {
+	return c.SignRawTransactionWithKeyAsync(txHex, privkeys, prevtxs, sighashtype).Receive()
 }
 
 /*

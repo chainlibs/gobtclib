@@ -7,6 +7,8 @@ import (
 
 const address = "mrVpnAaPap8BXLnYBc5pNfeMwwhvKcqvMq"
 const privkey = "cUSG5zKm1KqRq5YzQsbe2dS86W2VRq1HwwVN5J9itRCYdaduaZED"
+const addressFrom1 = "2N8GTyfYg1WKg9c2WEKK6a589gwHsKb9bzo"
+const addressFrom1PrivKey = "cSZ8cpqinGkN9i5quXb8ZL4bdayn8jypkJzRruZdEYCVyVtVdvLE"
 const addressTo = "mrVpnAaPap8BXLnYBc5pNfeMwwhvKcqvMq"
 const address1 = "2MvobEAKN1T8VALjQZdEhr3hfDWCLxhUiLo"
 const address2 = "2N7rd1LkJg5UoXDBkdfi4mUuyvTEzJtoBpj"
@@ -150,11 +152,16 @@ func DumpPrivkeyTest() {
 	//	log.Fatal("", "error", err)
 	//}
 	//log.Info("GetNewAddress", "address", addr)
-	result, err := cli.DumpPrivkey("mrVpnAaPap8BXLnYBc5pNfeMwwhvKcqvMq")
+	result, err := cli.DumpPrivkey(addressFrom1)
 	if err != nil {
 		log.Fatal("", "error", err)
 	}
 	log.Info("DumpPrivkey", "result", result)
+	//result, err := cli.DumpPrivkey("mrVpnAaPap8BXLnYBc5pNfeMwwhvKcqvMq")
+	//if err != nil {
+	//	log.Fatal("", "error", err)
+	//}
+	//log.Info("DumpPrivkey", "result", result)
 }
 
 /*
@@ -364,16 +371,21 @@ A demo test of GetTransaction.
 * Date: 2018/10/15 12:14
 */
 func GetTransactionTest() {
-	result, err := cli.GetTransaction("239f98f9a355fc0c3b8ac8d0556ace4c49251c5e711c22783f37e9e5f185859b", true)
+	result, err := cli.GetTransaction("fbb4b899ae57f05154d3fdf913510ce7d91a25ca7691ddedfbbecb7bd5a1ea28", true)
 	if err != nil {
 		log.Fatal("", "error", err)
 	}
 	log.Info("GetTransaction", "result", result)
-	result2, err2 := cli.GetTransaction("65bcaab247a598ae175eb5edf34531616ec7d8c4147d8ca6ad2b9b3c69543dc1", true)
-	if err2 != nil {
-		log.Fatal("", "error", err2)
-	}
-	log.Info("GetTransaction", "result", result2)
+	//result, err := cli.GetTransaction("239f98f9a355fc0c3b8ac8d0556ace4c49251c5e711c22783f37e9e5f185859b", true)
+	//if err != nil {
+	//	log.Fatal("", "error", err)
+	//}
+	//log.Info("GetTransaction", "result", result)
+	//result2, err2 := cli.GetTransaction("65bcaab247a598ae175eb5edf34531616ec7d8c4147d8ca6ad2b9b3c69543dc1", true)
+	//if err2 != nil {
+	//	log.Fatal("", "error", err2)
+	//}
+	//log.Info("GetTransaction", "result", result2)
 }
 
 /*
