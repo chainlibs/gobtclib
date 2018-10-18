@@ -67,6 +67,60 @@ Support RPC list
 - RAWTRANSACTIONS
 - UTIL
 - WALLET
+    - abandontransaction
+    - abortrescan
+    - addmultisigaddress
+    - backupwallet
+    - bumpfee
+    - createwallet
+    - dumpprivkey
+    - dumpwallet
+    - encryptwallet
+    - getaccount
+    - getaccountaddress
+    - getaddressesbylabel
+    - getaddressinfo
+    - getbalance
+    - getnewaddress
+    - getrawchangeaddress
+    - getreceivedbyaccount
+    - getreceivedbyaddress
+    - gettransaction
+    - getunconfirmedbalance
+    - getwalletinfo
+    - importaddress
+    - importmulti
+    - importprivkey
+    - -importprunedfunds-
+    - importpubkey
+    - importwallet
+    - keypoolrefill
+    - listaddressgroupings
+    - listlabels
+    - listlockunspent
+    - listreceivedbyaddress
+    - listsinceblock
+    - listtransactions
+    - listunspent
+    - listwallets
+    - loadwallet
+    - lockunspent
+    - move
+    - removeprunedfunds
+    - rescanblockchain
+    - sendfrom
+    - sendmany
+    - sendtoaddress
+    - sethdseed
+    - settxfee
+    - signmessage
+    - -signrawtransactionwithwallet-
+    - unloadwallet
+    - -walletcreatefundedpsbt-
+    - walletlock
+    - walletpassphrase
+    - walletpassphrasechange
+    - -walletprocesspsbt-
 
 Usage
 -----

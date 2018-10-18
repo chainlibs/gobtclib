@@ -143,5 +143,5 @@ func main() {
 	//demos.WalletLockTest() //ok
 	//demos.WalletPassphraseTest() //ok
 	//demos.WalletPassphraseChangeTest() //ok
-	//demos.WalletProcessPSBTTest()
+	//demos.WalletProcessPSBTTest() //TODO
 }
