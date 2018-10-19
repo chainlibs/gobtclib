@@ -74,15 +74,15 @@ func main() {
 	//demos.UptimeTest()
 
 	//RawTransactions rpc methods
-	//demos.CombinePSBTTest()
+	//demos.CombinePSBTTest() //ok
 	//demos.CombineRawTransactionTest() //ok
-	//demos.ConvertToPSBTTest()
-	//demos.CreatepSBTTest()
+	//demos.ConvertToPSBTTest() //ok
+	//demos.CreatepSBTTest() //ok
 	//demos.CreateRawTransactionTest() //ok
-	//demos.DecodePSBTTest()
+	//demos.DecodePSBTTest() //ok
 	//demos.DecodeRawTransactionTest() //ok
 	//demos.DecodeScriptTest() //ok
-	//demos.FinalizePSBTTest()
+	//demos.FinalizePSBTTest() //ok
 	//demos.FundRawTransactionTest() //ok
 	//demos.GetRawTransactionTest() //ok
 	//demos.GetRawTransactionVerboseTest() //ok

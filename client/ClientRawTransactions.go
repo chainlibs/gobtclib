@@ -14,8 +14,8 @@ See CombinePSBT for more details.
  * Author: architect.bian
  * Date: 2018/10/15 20:09
  */
-func (c *Client) CombinePSBTAsync(txs []string) futures.FutureResult {
-	cmd := NewCommand("combinepsbt", txs)
+func (c *Client) CombinePSBTAsync(txHexs []string) futures.FutureResult {
+	cmd := NewCommand("combinepsbt", txHexs)
 	return c.sendCmd(cmd)
 }
 
@@ -26,8 +26,8 @@ Implements the Combiner role.
  * Author: architect.bian
  * Date: 2018/10/15 20:18
  */
-func (c *Client) CombinePSBT(txs []string) (*interface{}, error) {
-	return c.CombinePSBTAsync(txs).Receive()
+func (c *Client) CombinePSBT(txHexs []string) (*interface{}, error) {
+	return c.CombinePSBTAsync(txHexs).Receive()
 }
 
 /*
@@ -59,16 +59,16 @@ func (c *Client) CombineRawTransaction(txs []string) (*interface{}, error) {
 
 /*
 Description:
-ConvertTopSBTAsync returns an instance of a type that can be used to get
+ConvertToPSBTAsync returns an instance of a type that can be used to get
 the result of the RPC at some future time by invoking the Receive function on
 the returned instance.
 
-See ConvertTopSBT for more details.
+See ConvertToPSBT for more details.
  * Author: architect.bian
  * Date: 2018/10/15 20:09
  */
-func (c *Client) ConvertTopSBTAsync(tx []byte, permitsigdata bool, iswitness bool) futures.FutureString {
-	cmd := NewCommand("converttopsbt", tx, permitsigdata, iswitness)
+func (c *Client) ConvertToPSBTAsync(txHex string, permitsigdata bool, iswitness bool) futures.FutureString {
+	cmd := NewCommand("converttopsbt", txHex, permitsigdata, iswitness)
 	return c.sendCmd(cmd)
 }
 
@@ -79,8 +79,8 @@ createpsbt and walletcreatefundedpsbt should be used for new applications.
  * Author: architect.bian
  * Date: 2018/10/15 20:22
  */
-func (c *Client) ConvertTopSBT(tx []byte) (*string, error) {
-	cmd := NewCommand("converttopsbt")
+func (c *Client) ConvertToPSBT(txHex string) (*string, error) {
+	cmd := NewCommand("converttopsbt", txHex)
 	return futures.FutureString(c.sendCmd(cmd)).Receive()
 }
 
@@ -91,8 +91,8 @@ createpsbt and walletcreatefundedpsbt should be used for new applications.
  * Author: architect.bian
  * Date: 2018/10/15 20:23
  */
-func (c *Client) ConvertTopSBTEntire(tx []byte, permitsigdata bool, iswitness bool) (*string, error) {
-	return c.ConvertTopSBTAsync(tx, permitsigdata, iswitness).Receive()
+func (c *Client) ConvertToPSBTEntire(txHex string, permitsigdata bool, iswitness bool) (*string, error) {
+	return c.ConvertToPSBTAsync(txHex, permitsigdata, iswitness).Receive()
 }
 
 /*
@@ -105,7 +105,7 @@ See CreatepSBT for more details.
  * Author: architect.bian
  * Date: 2018/10/15 20:09
  */
-func (c *Client) CreatepSBTAsync(inputs interface{}, outputs interface{}, locktime int32, replaceable bool) futures.FutureString {
+func (c *Client) CreatepSBTAsync(inputs []map[string]interface{}, outputs []map[string]interface{}, locktime int32, replaceable bool) futures.FutureString {
 	cmd := NewCommand("createpsbt", inputs, outputs, locktime, replaceable)
 	return c.sendCmd(cmd)
 }
@@ -117,7 +117,7 @@ Implements the Creator role.
  * Author: architect.bian
  * Date: 2018/10/15 20:27
  */
-func (c *Client) CreatepSBT(inputs interface{}, outputs interface{}, locktime int32, replaceable bool) (*string, error) {
+func (c *Client) CreatepSBT(inputs []map[string]interface{}, outputs []map[string]interface{}, locktime int32, replaceable bool) (*string, error) {
 	return c.CreatepSBTAsync(inputs, outputs, locktime, replaceable).Receive()
 }
 
@@ -131,7 +131,7 @@ See CreateRawTransaction for more details.
  * Author: architect.bian
  * Date: 2018/10/15 20:09
  */
-func (c *Client) CreateRawTransactionAsync(inputs interface{}, outputs interface{}, locktime int32, replaceable bool) futures.FutureString {
+func (c *Client) CreateRawTransactionAsync(inputs []map[string]interface{}, outputs []map[string]interface{}, locktime int32, replaceable bool) futures.FutureString {
 	cmd := NewCommand("createrawtransaction", inputs, outputs, locktime, replaceable)
 	return c.sendCmd(cmd)
 }
@@ -153,16 +153,16 @@ func (c *Client) CreateRawTransaction(inputs []map[string]interface{}, outputs [
 
 /*
 Description:
-DecodepSBTAsync returns an instance of a type that can be used to get
+DecodePSBTAsync returns an instance of a type that can be used to get
 the result of the RPC at some future time by invoking the Receive function on
 the returned instance.
 
-See DecodepSBT for more details.
+See DecodePSBT for more details.
  * Author: architect.bian
  * Date: 2018/10/15 20:09
  */
-func (c *Client) DecodepSBTAsync(psbt string) futures.FutureResult {
-	cmd := NewCommand("decodepsbt", psbt)
+func (c *Client) DecodePSBTAsync(psbtBase64 string) futures.FutureResult {
+	cmd := NewCommand("decodepsbt", psbtBase64)
 	return c.sendCmd(cmd)
 }
 
@@ -172,8 +172,8 @@ Return a JSON object representing the serialized, base64-encoded partially signe
  * Author: architect.bian
  * Date: 2018/10/15 20:32
  */
-func (c *Client) DecodepSBT(psbt string) (*interface{}, error) {
-	return c.DecodepSBTAsync(psbt).Receive()
+func (c *Client) DecodePSBT(psbtBase64 string) (*interface{}, error) {
+	return c.DecodePSBTAsync(psbtBase64).Receive()
 }
 
 /*
@@ -228,15 +228,15 @@ func (c *Client) DecodeScript(scriptHex string) (*interface{}, error) {
 
 /*
 Description:
-FinalizepSBTAsync returns an instance of a type that can be used to get
+FinalizePSBTAsync returns an instance of a type that can be used to get
 the result of the RPC at some future time by invoking the Receive function on
 the returned instance.
 
-See FinalizepSBT for more details.
+See FinalizePSBT for more details.
  * Author: architect.bian
  * Date: 2018/10/15 20:09
  */
-func (c *Client) FinalizepSBTAsync(psbt string, extract bool) futures.FutureResult {
+func (c *Client) FinalizePSBTAsync(psbt string, extract bool) futures.FutureResult {
 	cmd := NewCommand("finalizepsbt", psbt, extract)
 	return c.sendCmd(cmd)
 }
@@ -250,8 +250,8 @@ Implements the Finalizer and Extractor roles.
  * Author: architect.bian
  * Date: 2018/10/15 20:38
  */
-func (c *Client) FinalizepSBT(psbt string, extract bool) (*interface{}, error) {
-	return c.FinalizepSBTAsync(psbt, extract).Receive()
+func (c *Client) FinalizePSBT(psbt string, extract bool) (*interface{}, error) {
+	return c.FinalizePSBTAsync(psbt, extract).Receive()
 }
 
 /*

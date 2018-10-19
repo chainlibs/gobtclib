@@ -4,19 +4,19 @@ import (
 	"github.com/gobasis/log"
 )
 
-///*
-//Description:
-//A demo test of CombinePSBT.
-//* Author: architect.bian
-//* Date: 2018/10/15 12:14
-//*/
-//func CombinePSBTTest() {
-//	result, err := cli.CombinePSBT()
-//	if err != nil {
-//		log.Fatal("", "error", err)
-//	}
-//	log.Info("CombinePSBT", "result", result)
-//}
+/*
+Description:
+A demo test of CombinePSBT.
+* Author: architect.bian
+* Date: 2018/10/15 12:14
+*/
+func CombinePSBTTest() {
+	result, err := cli.CombinePSBT([]string{"cHNidP8BACwCAAAAAAHwufUFAAAAABl2qRR4crG2o1k4mc6eslFgrT7dktQTjIisAAAAAAAA"})
+	if err != nil {
+		log.Fatal("", "error", err)
+	}
+	log.Info("CombinePSBT", "result", result)
+}
 
 /*
 Description:
@@ -32,33 +32,47 @@ func CombineRawTransactionTest() {
 	log.Info("CombineRawTransaction", "result", result)
 }
 
-///*
-//Description:
-//A demo test of ConvertTopSBT.
-//* Author: architect.bian
-//* Date: 2018/10/15 12:14
-//*/
-//func ConvertTopSBTTest() {
-//	result, err := cli.ConvertTopSBT()
-//	if err != nil {
-//		log.Fatal("", "error", err)
-//	}
-//	log.Info("ConvertTopSBT", "result", result)
-//}
-//
-///*
-//Description:
-//A demo test of CreatepSBT.
-//* Author: architect.bian
-//* Date: 2018/10/15 12:14
-//*/
-//func CreatepSBTTest() {
-//	result, err := cli.CreatepSBT()
-//	if err != nil {
-//		log.Fatal("", "error", err)
-//	}
-//	log.Info("CreatepSBT", "result", result)
-//}
+/*
+Description:
+A demo test of ConvertToPSBT.
+* Author: architect.bian
+* Date: 2018/10/15 12:14
+*/
+func ConvertToPSBTTest() {
+	result, err := cli.ConvertToPSBT("020000000001f0b9f505000000001976a9147872b1b6a3593899ce9eb25160ad3edd92d4138c88ac00000000")
+	if err != nil {
+		log.Fatal("", "error", err)
+	}
+	log.Info("ConvertTopSBT", "result", result)
+}
+
+/*
+Description:
+A demo test of CreatepSBT.
+* Author: architect.bian
+* Date: 2018/10/15 12:14
+*/
+func CreatepSBTTest() {
+	inputs := make([]map[string]interface{}, 0)
+	vin := make(map[string]interface{})
+	vin["txid"] = "fbb4b899ae57f05154d3fdf913510ce7d91a25ca7691ddedfbbecb7bd5a1ea28"
+	vin["vout"] = 1
+	//vin["sequence"] = 4294967295
+	inputs = append(inputs, vin)
+	outputs := make([]map[string]interface{}, 0)
+	out := make(map[string]interface{})
+	out[addressTo] = 1.9999
+	outputs = append(outputs, out)
+	out = make(map[string]interface{})
+	out[addressFrom1] = 1
+	outputs = append(outputs, out)
+	result, err := cli.CreatepSBT(inputs, outputs, 0, true)
+	if err != nil {
+		log.Fatal("", "error", err)
+	}
+	log.Info("CreatepSBT", "result", result)
+	//result: cHNidP8BAHUCAAAAASjqodV7y7777d2RdsolGtnnDFET+f3TVFHwV66ZuLT7AQAAAAD9////AvCa6wsAAAAAGXapFHhysbajWTiZzp6yUWCtPt2S1BOMiKwA4fUFAAAAABepFKTF+v1MpAE84Keabn81F8PhhDJyhwAAAAAAAAAA
+}
 
 /*
 Description:
@@ -88,19 +102,21 @@ func CreateRawTransactionTest() {
 	//result: 020000000001f0b9f505000000001976a9147872b1b6a3593899ce9eb25160ad3edd92d4138c88ac00000000
 }
 
-///*
-//Description:
-//A demo test of DecodepSBT.
-//* Author: architect.bian
-//* Date: 2018/10/15 12:14
-//*/
-//func DecodepSBTTest() {
-//	result, err := cli.DecodepSBT()
-//	if err != nil {
-//		log.Fatal("", "error", err)
-//	}
-//	log.Info("DecodepSBT", "result", result)
-//}
+/*
+Description:
+A demo test of DecodePSBT.
+* Author: architect.bian
+* Date: 2018/10/15 12:14
+*/
+func DecodePSBTTest() {
+	//psbtBase64 := "cHNidP8BAHUCAAAAASjqodV7y7777d2RdsolGtnnDFET+f3TVFHwV66ZuLT7AQAAAAD9////AvCa6wsAAAAAGXapFHhysbajWTiZzp6yUWCtPt2S1BOMiKwA4fUFAAAAABepFKTF+v1MpAE84Keabn81F8PhhDJyhwAAAAAAAAAA"
+	psbtBase64 := "cHNidP8BACwCAAAAAAHwufUFAAAAABl2qRR4crG2o1k4mc6eslFgrT7dktQTjIisAAAAAAAA"
+	result, err := cli.DecodePSBT(psbtBase64)
+	if err != nil {
+		log.Fatal("", "error", err)
+	}
+	log.Info("DecodePSBT", "result", result)
+}
 
 /*
 Description:
@@ -151,19 +167,20 @@ func DecodeScriptTest() {
 	log.Info("DecodeScript", "result.addresses", ((*result).(map[string]interface{}))["addresses"])
 }
 
-///*
-//Description:
-//A demo test of FinalizepSBT.
-//* Author: architect.bian
-//* Date: 2018/10/15 12:14
-//*/
-//func FinalizepSBTTest() {
-//	result, err := cli.FinalizepSBT()
-//	if err != nil {
-//		log.Fatal("", "error", err)
-//	}
-//	log.Info("FinalizepSBT", "result", result)
-//}
+/*
+Description:
+A demo test of FinalizePSBT.
+* Author: architect.bian
+* Date: 2018/10/15 12:14
+*/
+func FinalizePSBTTest() {
+	psbtBase64 := "cHNidP8BAHUCAAAAASjqodV7y7777d2RdsolGtnnDFET+f3TVFHwV66ZuLT7AQAAAAD9////AvCa6wsAAAAAGXapFHhysbajWTiZzp6yUWCtPt2S1BOMiKwA4fUFAAAAABepFKTF+v1MpAE84Keabn81F8PhhDJyhwAAAAAAAAAA"
+	result, err := cli.FinalizePSBT(psbtBase64, true)
+	if err != nil {
+		log.Fatal("", "error", err)
+	}
+	log.Info("FinalizePSBT", "result", result)
+}
 
 /*
 Description:
@@ -228,20 +245,6 @@ func SendRawTransactionTest() {
 	log.Info("SendRawTransaction", "result", result)
 }
 
-///*
-//Description:
-//A demo test of SignRawTransaction.
-//* Author: architect.bian
-//* Date: 2018/10/15 12:14
-//*/
-//func SignRawTransactionTest() {
-//	result, err := cli.SignRawTransaction()
-//	if err != nil {
-//		log.Fatal("", "error", err)
-//	}
-//	log.Info("SignRawTransaction", "result", result)
-//}
-
 /*
 Description:
 A demo test of SignRawTransactionWithKey.
@@ -249,7 +252,8 @@ A demo test of SignRawTransactionWithKey.
 * Date: 2018/10/15 12:14
 */
 func SignRawTransactionWithKeyTest() {
-	result, err := cli.SignRawTransactionWithKey("0200000001731c3007e201b1e49ac79b99994453df6df152d8da082b4025ee79ab57cc26d30000000000fdffffff02f0b9f505000000001976a9147872b1b6a3593899ce9eb25160ad3edd92d4138c88ac00a3e1110000000017a914a4c5fafd4ca4013ce0a79a6e7f3517c3e18432728700000000",
+	txHex := "0200000001731c3007e201b1e49ac79b99994453df6df152d8da082b4025ee79ab57cc26d30000000000fdffffff02f0b9f505000000001976a9147872b1b6a3593899ce9eb25160ad3edd92d4138c88ac00a3e1110000000017a914a4c5fafd4ca4013ce0a79a6e7f3517c3e18432728700000000"
+	result, err := cli.SignRawTransactionWithKey(txHex,
 		[]string{addressFrom1PrivKey})
 	if err != nil {
 		log.Fatal("", "error", err)
