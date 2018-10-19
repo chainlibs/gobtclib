@@ -73,6 +73,13 @@ func main() {
 	//demos.StopTest()
 	//demos.UptimeTest()
 
+	//Generate rpc methods
+	//demos.GenerateTest()
+	//demos.GenerateToAddressTest()
+
+	//Network rpc methods
+	demos.GetNetworkInfoTest()
+
 	//RawTransactions rpc methods
 	//demos.CombinePSBTTest() //ok
 	//demos.CombineRawTransactionTest() //ok

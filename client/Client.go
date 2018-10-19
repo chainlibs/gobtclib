@@ -86,6 +86,28 @@ func (c *Client) Startup() *Client {
 
 /*
 Description:
+SendAsync send command and args, return an instance of a future type
+ * Author: architect.bian
+ * Date: 2018/08/23 16:02
+ */
+func (c *Client) SendAsync(command string, args ...interface{}) futures.FutureResult {
+	cmd := NewCommand(command, args...)
+	return futures.FutureResult(c.sendCmd(cmd))
+}
+
+/*
+Description:
+Send send any command and arguments, then return a result of interface type
+ * Author: architect.bian
+ * Date: 2018/08/23 16:02
+ */
+func (c *Client) Send(command string, args ...interface{}) (*interface{}, error) {
+	cmd := NewCommand(command, args...)
+	return futures.FutureResult(c.sendCmd(cmd)).Receive()
+}
+
+/*
+Description:
 handleRequests handles all outgoing messages when the client is running
 in HTTP POST mode.  It uses a buffered channel to serialize output messages
 while allowing the sender to continue running asynchronously.  It must be run
