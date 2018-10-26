@@ -81,6 +81,8 @@ func (c *Client) Startup() *Client {
 	log.Info("Starting RPC client", "Host", c.config.Host)
 	c.wg.Add(1)
 	go c.handleRequests()
+	//go c.handleRequests() // more routine?
+	//go c.handleRequests()
 	return c
 }
 

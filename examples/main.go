@@ -37,7 +37,7 @@ func main() {
 	//demos.GetBlockBytesTest()
 	//demos.GetBlockTest()
 	//demos.GetBlockVerboseTXTest()
-	//demos.GetBlockVerboseTXTest()
+	demos.GetBlockVerboseTXTest()
 	//demos.GetBlockChainInfoTest()
 	//demos.GetBlockCountTest()
 	//demos.GetBlockHashTest()
@@ -78,7 +78,7 @@ func main() {
 	//demos.GenerateToAddressTest()
 
 	//Network rpc methods
-	demos.GetNetworkInfoTest()
+	//demos.GetNetworkInfoTest()
 
 	//RawTransactions rpc methods
 	//demos.CombinePSBTTest() //ok
